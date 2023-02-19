@@ -1,4 +1,4 @@
-package com.example.jowl;
+package com.github.pawawudaf.jowl;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

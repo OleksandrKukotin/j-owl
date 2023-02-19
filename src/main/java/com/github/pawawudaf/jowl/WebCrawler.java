@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/WebCrawler.java
 package com.example.jowl;
+========
+package com.github.pawawudaf.jowl.parse;
+>>>>>>>> 8531e30 (Renamed core package):src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
