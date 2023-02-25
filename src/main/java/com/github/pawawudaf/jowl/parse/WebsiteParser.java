@@ -6,21 +6,26 @@ package com.github.pawawudaf.jowl.parse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+=======
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+>>>>>>> 841f8d3 (Implemented using of a recursion and Stream API in WebsiteParser class)
 
 public class WebCrawler {
 
+<<<<<<< HEAD
     private static final String LINK_VALIDATION_REGEX = "^(http://|https://)[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,}(:(\\d)+)?(/($|[a-zA-Z0-9\\-\\.\\?\\,\\'\\\\/+=&amp;%\\$#_\\*!]+))*$";
     private static final int MAX_CRAWLING_DEPTH = 2;
 
@@ -47,8 +52,52 @@ public class WebCrawler {
             }
             currentDepth++;
             storeResults(html);
+=======
+    private static final String LINK_VALIDATION_REGEX = "^(http://|https://)";
+
+    private static final int MAX_CRAWLING_DEPTH = 2;
+
+    // TODO: use Map (ConcurrentHashMap)
+    private final ConcurrentHashMap<String, String> links = new ConcurrentHashMap<>();
+    private final Set<String> visitedUrls = new HashSet<String>();
+    private final Queue<String> urlsToVisit = new LinkedList<String>();
+
+    // TODO: you can use Map as parameter
+    public Map<String, String> parse(String seedUrl, Map<String, String> map, int currentDepth) {
+        if (currentDepth > MAX_CRAWLING_DEPTH) {
+            return map;
+>>>>>>> 841f8d3 (Implemented using of a recursion and Stream API in WebsiteParser class)
         }
+
+        urlsToVisit.add(seedUrl);
+        String html = fetchHtml(seedUrl);
+        List<String> parsedLinks = parseLinks(html);
+        storeResults(html);
+
+        parsedLinks.stream()
+            .filter(link -> !visitedUrls.contains(link))
+            .peek(urlsToVisit::add)
+            .forEach(link -> parse(link, map, currentDepth + 1));
+        return map;
     }
+//    public void parse(String seedUrl, Map<String, String>) {
+//        int currentDepth = 0;
+//        urlsToVisit.add(seedUrl);
+//        while (!urlsToVisit.isEmpty() && currentDepth <= MAX_CRAWLING_DEPTH) {
+//            String url = urlsToVisit.remove();
+//            visitedUrls.add(url);
+//            String html = fetchHtml(url);
+//            List<String> links = parseLinks(html);
+//
+//            for (String link : links) {
+//                if (!visitedUrls.contains(link)) {
+//                    urlsToVisit.add(link);
+//                }
+//            }
+//            currentDepth++;
+//            storeResults(html);
+//        }
+//    }
 
     private String fetchHtml(String url) {
         try {
@@ -60,10 +109,10 @@ public class WebCrawler {
     }
 
     private List<String> parseLinks(String html) {
-        List<String> links = new ArrayList<>();
         Document doc = Jsoup.parse(html);
         Elements linkElements = doc.select("a[href]");
 
+<<<<<<< HEAD
         for (Element linkElement : linkElements) {
             String link = linkElement.attr("href");
             if(isLinkValid(link)) {
@@ -71,13 +120,16 @@ public class WebCrawler {
             }
         }
         return links;
+=======
+        return linkElements.stream()
+            .map(linkElement -> linkElement.attr("href"))
+            .filter(this::isLinkValid)
+            .toList();
+>>>>>>> 841f8d3 (Implemented using of a recursion and Stream API in WebsiteParser class)
     }
 
     private boolean isLinkValid(String url) {
-        if (url == null || url.trim().isEmpty()) {
-            return false;
-        }
-        return url.matches(LINK_VALIDATION_REGEX);
+        return url.contains(LINK_VALIDATION_REGEX);
     }
 
     private void storeResults(String html) {
