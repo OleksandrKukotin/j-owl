@@ -20,8 +20,12 @@ import java.util.Queue;
 import java.util.Set;
 =======
 import java.util.*;
+<<<<<<< HEAD
 import java.util.concurrent.ConcurrentHashMap;
 >>>>>>> 841f8d3 (Implemented using of a recursion and Stream API in WebsiteParser class)
+=======
+import java.util.concurrent.ConcurrentMap;
+>>>>>>> 8fb2ea2 (Added ParsedData class)
 
 public class WebCrawler {
 
@@ -57,47 +61,31 @@ public class WebCrawler {
 
     private static final int MAX_CRAWLING_DEPTH = 2;
 
-    // TODO: use Map (ConcurrentHashMap)
-    private final ConcurrentHashMap<String, String> links = new ConcurrentHashMap<>();
     private final Set<String> visitedUrls = new HashSet<String>();
     private final Queue<String> urlsToVisit = new LinkedList<String>();
 
-    // TODO: you can use Map as parameter
-    public Map<String, String> parse(String seedUrl, Map<String, String> map, int currentDepth) {
+    public ParsedData parse(String seedUrl, ParsedData parsedData, int currentDepth) {
         if (currentDepth > MAX_CRAWLING_DEPTH) {
+<<<<<<< HEAD
             return map;
 >>>>>>> 841f8d3 (Implemented using of a recursion and Stream API in WebsiteParser class)
+=======
+            return parsedData;
+>>>>>>> 8fb2ea2 (Added ParsedData class)
         }
 
         urlsToVisit.add(seedUrl);
         String html = fetchHtml(seedUrl);
+        parsedData.putObject(seedUrl, html);
         List<String> parsedLinks = parseLinks(html);
         storeResults(html);
 
         parsedLinks.stream()
             .filter(link -> !visitedUrls.contains(link))
             .peek(urlsToVisit::add)
-            .forEach(link -> parse(link, map, currentDepth + 1));
-        return map;
+            .forEach(link -> parse(link, parsedData, currentDepth + 1));
+        return parsedData;
     }
-//    public void parse(String seedUrl, Map<String, String>) {
-//        int currentDepth = 0;
-//        urlsToVisit.add(seedUrl);
-//        while (!urlsToVisit.isEmpty() && currentDepth <= MAX_CRAWLING_DEPTH) {
-//            String url = urlsToVisit.remove();
-//            visitedUrls.add(url);
-//            String html = fetchHtml(url);
-//            List<String> links = parseLinks(html);
-//
-//            for (String link : links) {
-//                if (!visitedUrls.contains(link)) {
-//                    urlsToVisit.add(link);
-//                }
-//            }
-//            currentDepth++;
-//            storeResults(html);
-//        }
-//    }
 
     private String fetchHtml(String url) {
         try {
