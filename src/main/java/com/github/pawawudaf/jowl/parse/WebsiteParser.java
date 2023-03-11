@@ -8,8 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import java.io.FileWriter;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.io.PrintWriter;
 <<<<<<< HEAD
 import java.util.ArrayList;
@@ -26,6 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 =======
 import java.util.concurrent.ConcurrentMap;
 >>>>>>> 8fb2ea2 (Added ParsedData class)
+=======
+import java.util.*;
+>>>>>>> 3c98ae6 (Implemented IndexService, WebsiteController moved to IndexingController, small upgrades of ParsedData and WebsiteParser)
 
 public class WebCrawler {
 
@@ -61,9 +64,6 @@ public class WebCrawler {
 
     private static final int MAX_CRAWLING_DEPTH = 2;
 
-    private final Set<String> visitedUrls = new HashSet<String>();
-    private final Queue<String> urlsToVisit = new LinkedList<String>();
-
     public ParsedData parse(String seedUrl, ParsedData parsedData, int currentDepth) {
         if (currentDepth > MAX_CRAWLING_DEPTH) {
 <<<<<<< HEAD
@@ -74,16 +74,16 @@ public class WebCrawler {
 >>>>>>> 8fb2ea2 (Added ParsedData class)
         }
 
-        urlsToVisit.add(seedUrl);
         String html = fetchHtml(seedUrl);
         parsedData.putObject(seedUrl, html);
         List<String> parsedLinks = parseLinks(html);
-        storeResults(html);
 
         parsedLinks.stream()
-            .filter(link -> !visitedUrls.contains(link))
-            .peek(urlsToVisit::add)
-            .forEach(link -> parse(link, parsedData, currentDepth + 1));
+            .filter(link -> !parsedData.isUrlContained(link))
+            .forEach(link -> {
+                parse(link, parsedData, currentDepth + 1);
+            });
+
         return parsedData;
     }
 
@@ -92,7 +92,7 @@ public class WebCrawler {
             Document html = Jsoup.connect(url).get();
             return html.toString();
         } catch (IOException e) {
-            return "";
+            throw new FetchHtmlException("Error fetching HTML from URL: " + url, e);
         }
     }
 
@@ -120,11 +120,18 @@ public class WebCrawler {
         return url.contains(LINK_VALIDATION_REGEX);
     }
 
+<<<<<<< HEAD
     private void storeResults(String html) {
         try (PrintWriter out = new PrintWriter(new FileWriter("results.txt", true))) {
             out.println(html);
         } catch (IOException e) {
             e.printStackTrace();
+=======
+    private static final class FetchHtmlException extends RuntimeException {
+
+        public FetchHtmlException(String message, Throwable cause) {
+            super(message, cause);
+>>>>>>> 3c98ae6 (Implemented IndexService, WebsiteController moved to IndexingController, small upgrades of ParsedData and WebsiteParser)
         }
     }
 }
