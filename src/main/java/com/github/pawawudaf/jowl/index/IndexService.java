@@ -1,7 +1,11 @@
 package com.github.pawawudaf.jowl.index;
 
+<<<<<<< HEAD
 import com.github.pawawudaf.jowl.parse.ParsedData;
 import org.apache.lucene.analysis.Analyzer;
+=======
+import com.github.pawawudaf.jowl.parse.HtmlPage;
+>>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -19,7 +23,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+<<<<<<< HEAD
 import java.util.Set;
+=======
+import java.util.Map;
+>>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
 
 @Service
 public class IndexService {
@@ -38,7 +46,7 @@ public class IndexService {
         }
     }
 
-    public void indexDocuments(ParsedData data) {
+    public void indexDocuments(Map<String, HtmlPage> data) {
         try {
             indexWriter.addDocuments(createDocuments(data));
             indexWriter.commit();
@@ -64,12 +72,18 @@ public class IndexService {
         }
     }
 
-    private List<Document> createDocuments(ParsedData data) {
-        return data.getDataEntrySet().stream()
+    private List<Document> createDocuments(Map<String, HtmlPage> data) {
+        return data.entrySet().stream()
             .map(entry -> {
                 Document document = new Document();
+<<<<<<< HEAD
                 document.add(new TextField("key", entry.getKey(), Field.Store.YES));
                 document.add(new TextField("value", entry.getValue(), Field.Store.YES));
+=======
+                document.add(new TextField("LINK", entry.getKey(), Field.Store.YES));
+                document.add(new TextField("TITLE", entry.getValue().getTitle(), Field.Store.YES));
+                document.add(new TextField("BODY", entry.getValue().getBody().text(), Field.Store.YES));
+>>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
                 return document;
             })
             .toList();
