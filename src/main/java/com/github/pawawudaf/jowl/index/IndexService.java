@@ -10,18 +10,30 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
+<<<<<<< HEAD
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexableField;
+=======
+import org.apache.lucene.index.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
+>>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
+<<<<<<< HEAD
 import java.nio.file.Path;
+=======
+import java.util.Arrays;
+>>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 import java.util.List;
 <<<<<<< HEAD
 import java.util.Set;
@@ -55,6 +67,7 @@ public class IndexService {
         }
     }
 
+<<<<<<< HEAD
     public String getStringOfIndexedDocuments() {
         StringBuilder stringBuilder = new StringBuilder();
         try (IndexReader indexReader = DirectoryReader.open(indexWriter)) {
@@ -67,8 +80,30 @@ public class IndexService {
                 stringBuilder.append("\n");
             }
             return stringBuilder.toString();
+=======
+    public List<IndexDto> getAllIndexedDocuments() {
+        try (IndexReader reader = DirectoryReader.open(indexWriter)) {
+            IndexSearcher searcher = new IndexSearcher(reader);
+            Query query = new MatchAllDocsQuery();
+            TopDocs topDocs = searcher.search(query, 10);
+
+            return Arrays.stream(topDocs.scoreDocs)
+                .map(scoreDoc -> {
+                    try {
+                        Document doc = reader.document(scoreDoc.doc);
+                        return new IndexDto(
+                            doc.get("TITLE"),
+                            doc.get("LINK"),
+                            topDocs
+                        );
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .toList();
+>>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
         } catch (IOException e) {
-            throw new IndexReaderException("Error creating IndexReader", e);
+            throw new IndexReaderException("Error during reading index documents", e);
         }
     }
 

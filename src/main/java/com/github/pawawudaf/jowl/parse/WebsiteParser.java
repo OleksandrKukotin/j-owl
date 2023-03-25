@@ -4,9 +4,16 @@ package com.example.jowl;
 package com.github.pawawudaf.jowl.parse;
 >>>>>>>> 8531e30 (Renamed core package):src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+<<<<<<< HEAD
+=======
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+>>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 
 import java.io.IOException;
 <<<<<<< HEAD
@@ -36,6 +43,7 @@ import java.util.Map;
 
 public class WebCrawler {
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     private static final String LINK_VALIDATION_REGEX = "^(http://|https://)[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,}(:(\\d)+)?(/($|[a-zA-Z0-9\\-\\.\\?\\,\\'\\\\/+=&amp;%\\$#_\\*!]+))*$";
     private static final int MAX_CRAWLING_DEPTH = 2;
@@ -91,15 +99,20 @@ public class WebCrawler {
 
         return parsedData;
 =======
+=======
+    private static final UrlValidator urlValidator = new UrlValidator();
+    private static final Logger logger = LoggerFactory.getLogger(WebsiteParser.class);
+>>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 
-    public Map<String, HtmlPage> parse(String seedUrl, Map<String, HtmlPage> dataMap) {
+    public Map<String, HtmlPage> parse(String seedUrl, Map<String, HtmlPage> dataMap, int maxDepth) {
         HtmlPage htmlPage = fetchHtml(seedUrl);
-        for (String link : parseLinks(htmlPage.getLinks())) {
-            if (dataMap.containsKey(link)) {
-                continue;
+        dataMap.put(seedUrl, htmlPage);
+        if (maxDepth > 0) {
+            for (String link : parseLinks(htmlPage.getLinks())) {
+                if (!dataMap.containsKey(link)) {
+                    parse(link, dataMap, maxDepth - 1);
+                }
             }
-            dataMap.put(link, htmlPage);
-            parse(link, dataMap);
         }
         return dataMap;
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
@@ -119,7 +132,8 @@ public class WebCrawler {
             return htmlPage;
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
         } catch (IOException e) {
-            throw new FetchHtmlException("Error fetching HTML from URL: " + url, e);
+            logger.error("Error fetching HTML from URL: " + url, e);
+            return new HtmlPage();
         }
     }
 
@@ -149,6 +163,7 @@ public class WebCrawler {
     }
 
     private boolean isLinkValid(String url) {
+<<<<<<< HEAD
         return url.contains(LINK_VALIDATION_REGEX);
     }
 
@@ -170,5 +185,8 @@ public class WebCrawler {
             super(message, exception);
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
         }
+=======
+        return urlValidator.isValid(url);
+>>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
     }
 }
