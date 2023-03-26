@@ -39,7 +39,11 @@ import java.util.*;
 >>>>>>> 3c98ae6 (Implemented IndexService, WebsiteController moved to IndexingController, small upgrades of ParsedData and WebsiteParser)
 =======
 import java.util.Map;
+<<<<<<< HEAD
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
+=======
+import java.util.regex.Pattern;
+>>>>>>> 78dddf2 (Added StopWatch logging for /index endpoint, changed link validation mechanism in WebsiteParser and logging info about efficiency, added method isEmpty() for HtmlPage)
 
 public class WebCrawler {
 
@@ -101,18 +105,24 @@ public class WebCrawler {
 =======
 =======
     private static final UrlValidator urlValidator = new UrlValidator();
+    private static final Pattern MEDIA_PATTERN = Pattern.compile("\\.(png|jpe?g|gif|bmp|webp|svgz?|pdf)$");
     private static final Logger logger = LoggerFactory.getLogger(WebsiteParser.class);
 >>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 
     public Map<String, HtmlPage> parse(String seedUrl, Map<String, HtmlPage> dataMap, int maxDepth) {
         HtmlPage htmlPage = fetchHtml(seedUrl);
-        dataMap.put(seedUrl, htmlPage);
+        if (!htmlPage.isEmpty()) {
+            dataMap.put(seedUrl, htmlPage);
+        }
         if (maxDepth > 0) {
+            int linksProcessed = 0;
             for (String link : parseLinks(htmlPage.getLinks())) {
                 if (!dataMap.containsKey(link)) {
-                    parse(link, dataMap, maxDepth - 1);
+                    dataMap = parse(link, dataMap, maxDepth - 1);
+                    linksProcessed++;
                 }
             }
+            logger.info("Processed " + linksProcessed + " links for URL: " + seedUrl);
         }
         return dataMap;
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
@@ -128,11 +138,10 @@ public class WebCrawler {
             htmlPage.setTitle(html.title());
             htmlPage.setBody(html.body());
             htmlPage.setLinks(html.select("a[href]"));
-
             return htmlPage;
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
         } catch (IOException e) {
-            logger.error("Error fetching HTML from URL: " + url, e);
+            logger.error("Error fetching HTML from URL: " + url);
             return new HtmlPage();
         }
     }
@@ -164,6 +173,7 @@ public class WebCrawler {
 
     private boolean isLinkValid(String url) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         return url.contains(LINK_VALIDATION_REGEX);
     }
 
@@ -188,5 +198,8 @@ public class WebCrawler {
 =======
         return urlValidator.isValid(url);
 >>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
+=======
+        return !MEDIA_PATTERN.matcher(url.toLowerCase()).find() && urlValidator.isValid(url);
+>>>>>>> 78dddf2 (Added StopWatch logging for /index endpoint, changed link validation mechanism in WebsiteParser and logging info about efficiency, added method isEmpty() for HtmlPage)
     }
 }
