@@ -128,7 +128,25 @@ public class WebCrawler {
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
     }
 
+<<<<<<< HEAD
     private HtmlPage fetchHtml(String url) {
+=======
+    public Map<String, ParsedHtmlPage> parse(Set<String> urls, Map<String, ParsedHtmlPage> pages, int depth) {
+        if (depth < MIN_DEPTH || urls.isEmpty()) {
+            return pages;
+        }
+
+        for (String url : urls) {
+            ParsedHtmlPage parsedHtmlPage = fetchHtml(url);
+            pages.put(url, parsedHtmlPage);
+            return parse(parsedHtmlPage.getLinks(), pages, depth - 1);
+        }
+
+        return pages;   // TODO: handle case when urls = 0
+    }
+
+    private ParsedHtmlPage fetchHtml(String url) {
+>>>>>>> 5651a41 (Completed ont of TODOs, for review another one)
         try {
             Document html = Jsoup.connect(url).get();
 <<<<<<< HEAD

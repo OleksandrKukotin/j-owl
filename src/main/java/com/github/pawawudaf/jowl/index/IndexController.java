@@ -21,7 +21,12 @@ import java.util.Map;
 public class IndexController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+<<<<<<< HEAD
     private static final int MAX_DEPTH = 2;
+=======
+    private static final StopWatch stopWatch = new StopWatch();
+    private static final int MAX_DEPTH = 7;
+>>>>>>> 5651a41 (Completed ont of TODOs, for review another one)
 
     private final WebsiteParser websiteParser;
     private final IndexService indexService;
@@ -36,7 +41,10 @@ public class IndexController {
     @ResponseStatus(HttpStatus.CREATED)
     public void index(@RequestBody IndexCommand indexCommand) {
         logger.info("Indexing process started... Seed URL:" + indexCommand.getLink());
+<<<<<<< HEAD
         StopWatch stopWatch = new StopWatch();
+=======
+>>>>>>> 5651a41 (Completed ont of TODOs, for review another one)
         try {
             stopWatch.start("Parsing");
             Map<String, HtmlPage> parsedPages = websiteParser.parse(indexCommand.getLink(), new HashMap<String, HtmlPage>(), MAX_DEPTH);
