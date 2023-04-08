@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 >>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 
+<<<<<<< HEAD
 import java.io.IOException;
 <<<<<<< HEAD
 import java.io.PrintWriter;
@@ -25,6 +26,10 @@ import java.util.LinkedList;
 import java.util.List;
 <<<<<<< HEAD
 import java.util.Queue;
+=======
+import java.util.HashSet;
+import java.util.Map;
+>>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
 import java.util.Set;
 =======
 import java.util.*;
@@ -60,6 +65,7 @@ public class WebCrawler {
         this.urlsToVisit = new LinkedList<>();
     }
 
+<<<<<<< HEAD
     public void crawl(String seedUrl) {
         int currentDepth = 0;
         urlsToVisit.add(seedUrl);
@@ -132,23 +138,48 @@ public class WebCrawler {
     private HtmlPage fetchHtml(String url) {
 =======
     public Map<String, ParsedHtmlPage> parse(Set<String> urls, Map<String, ParsedHtmlPage> pages, int depth) {
+=======
+    public Map<String, ParsedHtmlPage> parse(Set<String> urls, Map<String, ParsedHtmlPage> pages, int depth, Set<String> visited) {
+>>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
         if (depth < MIN_DEPTH || urls.isEmpty()) {
             return pages;
         }
 
+        Set<String> newUrls = new HashSet<>();
         for (String url : urls) {
+<<<<<<< HEAD
             ParsedHtmlPage parsedHtmlPage = fetchHtml(url);
             pages.put(url, parsedHtmlPage);
             return parse(parsedHtmlPage.getLinks(), pages, depth - 1);
         }
 
         return pages;   // TODO: handle case when urls = 0
+=======
+            if (!visited.contains(url)) {
+                LOGGER.info("Current URL: {}", url);
+                visited.add(url);
+                ParsedHtmlPage parsedHtmlPage = fetchHtml(url);
+
+                if (parsedHtmlPage.getLinks().isEmpty()) {
+                    pages.put(url, parsedHtmlPage);
+                    continue;
+                }
+
+                newUrls.addAll(parsedHtmlPage.getLinks());
+                pages.put(url, parsedHtmlPage);
+            }
+        }
+
+        return parse(newUrls, pages, depth - 1, visited);
+>>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
     }
+
 
     private ParsedHtmlPage fetchHtml(String url) {
 >>>>>>> 5651a41 (Completed ont of TODOs, for review another one)
         try {
             Document html = Jsoup.connect(url).get();
+<<<<<<< HEAD
 <<<<<<< HEAD
             return html.toString();
 =======
@@ -161,6 +192,17 @@ public class WebCrawler {
         } catch (IOException e) {
             logger.error("Error fetching HTML from URL: " + url);
             return new HtmlPage();
+=======
+
+            ParsedHtmlPage parsedHtmlPage = new ParsedHtmlPage();
+            parsedHtmlPage.setTitle(html.title());
+            parsedHtmlPage.setBody(html.body());
+            parsedHtmlPage.setLinks(parseLinks(html.select(CSS_QUERY)));
+            return parsedHtmlPage;
+        } catch (Exception e) {
+            LOGGER.error("Error fetching HTML from URL: {}", url);
+            return new ParsedHtmlPage();
+>>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
         }
     }
 
