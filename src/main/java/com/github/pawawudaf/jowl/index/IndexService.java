@@ -20,7 +20,11 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
+<<<<<<< HEAD
 import org.apache.lucene.search.Query;
+=======
+import org.apache.lucene.search.ScoreDoc;
+>>>>>>> b35e441 (Upgraded classes of index package)
 import org.apache.lucene.search.TopDocs;
 >>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 import org.apache.lucene.store.Directory;
@@ -44,6 +48,10 @@ import java.util.Map;
 @Service
 public class IndexService {
 
+    static final String TITLE = "TITLE";
+    static final String LINK = "LINK";
+    static final String BODY = "BODY";
+    static final int NUMBER_OF_DOCS = 10;
     private final IndexWriter indexWriter;
 
     public IndexService() {
@@ -67,6 +75,7 @@ public class IndexService {
         }
     }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     public String getStringOfIndexedDocuments() {
         StringBuilder stringBuilder = new StringBuilder();
@@ -100,6 +109,28 @@ public class IndexService {
                         throw new RuntimeException(e);
                     }
                 })
+=======
+    private IndexDto getDocumentFromScoreDoc(ScoreDoc scoreDoc, IndexReader reader) {
+        try {
+            Document doc = reader.storedFields().document(scoreDoc.doc);
+            return new IndexDto(
+                doc.get(TITLE),
+                doc.get(LINK),
+                doc.get(BODY)
+            );
+        } catch (IOException e) {
+            throw new GettingIndexException("", e);
+        }
+    }
+
+    public List<IndexDto> getAllIndexedDocuments() {
+        try (IndexReader reader = DirectoryReader.open(indexWriter)) {
+            IndexSearcher searcher = new IndexSearcher(reader);
+            TopDocs topDocs = searcher.search(new MatchAllDocsQuery(), NUMBER_OF_DOCS);
+
+            return Arrays.stream(topDocs.scoreDocs)
+                .map(scoreDoc -> getDocumentFromScoreDoc(scoreDoc, reader))
+>>>>>>> b35e441 (Upgraded classes of index package)
                 .toList();
 >>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
         } catch (IOException e) {
@@ -112,6 +143,7 @@ public class IndexService {
             .map(entry -> {
                 Document document = new Document();
 <<<<<<< HEAD
+<<<<<<< HEAD
                 document.add(new TextField("key", entry.getKey(), Field.Store.YES));
                 document.add(new TextField("value", entry.getValue(), Field.Store.YES));
 =======
@@ -119,9 +151,21 @@ public class IndexService {
                 document.add(new TextField("TITLE", entry.getValue().getTitle(), Field.Store.YES));
                 document.add(new TextField("BODY", entry.getValue().getBody().text(), Field.Store.YES));
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
+=======
+                document.add(new TextField(LINK, entry.getKey(), Field.Store.YES));
+                document.add(new TextField(TITLE, entry.getValue().getTitle(), Field.Store.YES));
+                document.add(new TextField(BODY, entry.getValue().getBody().text(), Field.Store.YES));
+>>>>>>> b35e441 (Upgraded classes of index package)
                 return document;
             })
             .toList();
+    }
+
+    private static final class GettingIndexException extends RuntimeException {
+
+        public GettingIndexException(String message, Exception exception) {
+            super(message, exception);
+        }
     }
 
     private static final class TempDirectoryCreationException extends RuntimeException {
