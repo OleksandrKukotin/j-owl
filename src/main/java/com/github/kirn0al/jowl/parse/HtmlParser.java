@@ -1,8 +1,12 @@
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
 <<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/WebCrawler.java
 package com.example.jowl;
 ========
 package com.github.pawawudaf.jowl.parse;
 >>>>>>>> 8531e30 (Renamed core package):src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
+=======
+package com.github.kirn0al.jowl.parse;
+>>>>>>> 81b5b0e (Renamed core package):src/main/java/com/github/kirn0al/jowl/parse/HtmlParser.java
 
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.HttpStatusException;

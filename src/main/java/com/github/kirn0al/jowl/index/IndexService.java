@@ -1,11 +1,15 @@
-package com.github.pawawudaf.jowl.index;
+package com.github.kirn0al.jowl.index;
 
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/index/IndexService.java
 <<<<<<< HEAD
 import com.github.pawawudaf.jowl.parse.ParsedData;
 import org.apache.lucene.analysis.Analyzer;
 =======
 import com.github.pawawudaf.jowl.parse.HtmlPage;
 >>>>>>> a14c866 (Added logger and made multiply changes according to TODOs)
+=======
+import com.github.kirn0al.jowl.parse.ParsedHtmlPage;
+>>>>>>> 81b5b0e (Renamed core package):src/main/java/com/github/kirn0al/jowl/index/IndexService.java
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;

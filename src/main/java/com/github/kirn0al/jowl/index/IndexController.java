@@ -1,5 +1,6 @@
-package com.github.pawawudaf.jowl.index;
+package com.github.kirn0al.jowl.index;
 
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/index/IndexController.java
 <<<<<<< HEAD
 import com.github.pawawudaf.jowl.parse.HtmlPage;
 import com.github.pawawudaf.jowl.parse.WebsiteParser;
@@ -7,6 +8,10 @@ import com.github.pawawudaf.jowl.parse.WebsiteParser;
 import com.github.pawawudaf.jowl.parse.ParsedHtmlPage;
 import com.github.pawawudaf.jowl.parse.HtmlParser;
 >>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes)
+=======
+import com.github.kirn0al.jowl.parse.HtmlParser;
+import com.github.kirn0al.jowl.parse.ParsedHtmlPage;
+>>>>>>> 81b5b0e (Renamed core package):src/main/java/com/github/kirn0al/jowl/index/IndexController.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
