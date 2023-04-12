@@ -1,7 +1,12 @@
 package com.github.pawawudaf.jowl.index;
 
+<<<<<<< HEAD
 import com.github.pawawudaf.jowl.parse.HtmlPage;
 import com.github.pawawudaf.jowl.parse.WebsiteParser;
+=======
+import com.github.pawawudaf.jowl.parse.ParsedHtmlPage;
+import com.github.pawawudaf.jowl.parse.HtmlParser;
+>>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes)
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +36,12 @@ public class IndexController {
 =======
 >>>>>>> b06d99c (Added PathVariable to /index endpoint and changed logging implementation)
 
-    private final WebsiteParser websiteParser;
+    private final HtmlParser htmlParser;
     private final IndexService indexService;
 
     @Autowired
-    public IndexController(WebsiteParser websiteParser, IndexService indexService) {
-        this.websiteParser = websiteParser;
+    public IndexController(HtmlParser websiteParser, IndexService indexService) {
+        this.htmlParser = websiteParser;
         this.indexService = indexService;
     }
 
@@ -70,7 +75,7 @@ public class IndexController {
         if (!stopWatch.isRunning()) stopWatch.start("Indexing");
         logger.info("Indexing process started... Seed URL: {}. Depth parameter: {}", indexWriteCommand.getLink(), depth);
         Set<String> seedUrl = Collections.singleton(indexWriteCommand.getLink());
-        Map<String, ParsedHtmlPage> parsedPages = websiteParser.parse(seedUrl, new HashMap<>(), depth, new HashSet<>());
+        Map<String, ParsedHtmlPage> parsedPages = htmlParser.parse(seedUrl, new HashMap<>(), depth, new HashSet<>());
         indexService.indexDocuments(parsedPages);
         stopWatch.stop();
         logger.info("The indexing process is done. Elapsed time: {} sec.", stopWatch.getLastTaskInfo().getTimeSeconds());
@@ -81,12 +86,5 @@ public class IndexController {
     @ResponseStatus(HttpStatus.OK)
     public List<IndexDto> showIndex() {
         return indexService.getAllIndexedDocuments();
-    }
-
-    public static final class IndexingErrorException extends RuntimeException {
-
-        public IndexingErrorException(String message, Exception exception) {
-            super(message, exception);
-        }
     }
 }

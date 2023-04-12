@@ -5,6 +5,7 @@ package com.github.pawawudaf.jowl.parse;
 >>>>>>>> 8531e30 (Renamed core package):src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 >>>>>>> 10abe91 (Added validator and changed parse() method in WebsiteParser, created IndexDto and according method in IndexService, IndexController moved from Controller to RestController)
 
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
 <<<<<<< HEAD
 import java.io.IOException;
 <<<<<<< HEAD
@@ -27,6 +29,10 @@ import java.util.List;
 <<<<<<< HEAD
 import java.util.Queue;
 =======
+=======
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+>>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes):src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
 import java.util.HashSet;
 import java.util.Map;
 >>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
@@ -50,19 +56,35 @@ import java.util.Map;
 import java.util.regex.Pattern;
 >>>>>>> 78dddf2 (Added StopWatch logging for /index endpoint, changed link validation mechanism in WebsiteParser and logging info about efficiency, added method isEmpty() for HtmlPage)
 
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
 public class WebCrawler {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
     private static final String LINK_VALIDATION_REGEX = "^(http://|https://)[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,}(:(\\d)+)?(/($|[a-zA-Z0-9\\-\\.\\?\\,\\'\\\\/+=&amp;%\\$#_\\*!]+))*$";
     private static final int MAX_CRAWLING_DEPTH = 2;
+=======
+@Component
+public class HtmlParser {
+
+    // TODO: add Concurrency
+    private static final Logger logger = LoggerFactory.getLogger(HtmlParser.class);
+    private static final Pattern MEDIA_PATTERN = Pattern.compile("\\.(png|jpe?g|gif|bmp|webp|svgz?|pdf)$");
+    private static final String CSS_QUERY = "a[href]";
+    private static final int STOP_DEPTH = 1;
+>>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes):src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
 
     private final Set<String> visitedUrls;
     private final Queue<String> urlsToVisit;
 
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
     public WebCrawler() {
         this.visitedUrls = new HashSet<>();
         this.urlsToVisit = new LinkedList<>();
+=======
+    public HtmlParser(UrlValidator urlValidator) {
+        this.urlValidator = urlValidator;
+>>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes):src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
     }
 
 <<<<<<< HEAD
@@ -140,8 +162,12 @@ public class WebCrawler {
     public Map<String, ParsedHtmlPage> parse(Set<String> urls, Map<String, ParsedHtmlPage> pages, int depth) {
 =======
     public Map<String, ParsedHtmlPage> parse(Set<String> urls, Map<String, ParsedHtmlPage> pages, int depth, Set<String> visited) {
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
 >>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
         if (depth < MIN_DEPTH || urls.isEmpty()) {
+=======
+        if (depth < STOP_DEPTH || urls.isEmpty()) {
+>>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes):src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
             return pages;
         }
 
@@ -156,7 +182,7 @@ public class WebCrawler {
         return pages;   // TODO: handle case when urls = 0
 =======
             if (!visited.contains(url)) {
-                LOGGER.info("Current URL: {}", url);
+                logger.info("Current URL: {}", url);
                 visited.add(url);
                 ParsedHtmlPage parsedHtmlPage = fetchHtml(url);
 
@@ -199,11 +225,21 @@ public class WebCrawler {
             parsedHtmlPage.setBody(html.body());
             parsedHtmlPage.setLinks(parseLinks(html.select(CSS_QUERY)));
             return parsedHtmlPage;
+<<<<<<< HEAD:src/main/java/com/github/pawawudaf/jowl/parse/WebsiteParser.java
         } catch (Exception e) {
             LOGGER.error("Error fetching HTML from URL: {}", url);
             return new ParsedHtmlPage();
 >>>>>>> 9f27975 (Reworked WebsiteParser's parse() method and minor logging change)
+=======
+        } catch (SocketTimeoutException e) {
+            logger.error("A connection timed out while processing the following URL: {}", url);
+        } catch (HttpStatusException e) {
+            logger.error("A resource accessed by URL {} gave response with status code {}", url, e.getStatusCode());
+        } catch (IOException e) {
+            logger.error("IOException caused by error during fetching HTML from the following URL: {}", url);
+>>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes):src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
         }
+        return new ParsedHtmlPage();
     }
 
 <<<<<<< HEAD
