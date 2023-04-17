@@ -55,7 +55,6 @@ public class IndexService {
     static final String TITLE = "TITLE";
     static final String LINK = "LINK";
     static final String BODY = "BODY";
-    static final int NUMBER_OF_DOCS = 10;
     private final IndexWriter indexWriter;
 
     public IndexService() {
@@ -79,6 +78,7 @@ public class IndexService {
         }
     }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     public String getStringOfIndexedDocuments() {
@@ -114,6 +114,12 @@ public class IndexService {
                     }
                 })
 =======
+=======
+    public int countIndexedDocuments() {
+        return indexWriter.getDocStats().numDocs;
+    }
+
+>>>>>>> 3f63f6f (Minor updates)
     private IndexDto getDocumentFromScoreDoc(ScoreDoc scoreDoc, IndexReader reader) {
         try {
             Document doc = reader.storedFields().document(scoreDoc.doc);
@@ -127,10 +133,10 @@ public class IndexService {
         }
     }
 
-    public List<IndexDto> getAllIndexedDocuments() {
+    public List<IndexDto> showCertainNumberOfDocuments(int numberOfDocuments) {
         try (IndexReader reader = DirectoryReader.open(indexWriter)) {
             IndexSearcher searcher = new IndexSearcher(reader);
-            TopDocs topDocs = searcher.search(new MatchAllDocsQuery(), NUMBER_OF_DOCS);
+            TopDocs topDocs = searcher.search(new MatchAllDocsQuery(), numberOfDocuments);
 
             return Arrays.stream(topDocs.scoreDocs)
                 .map(scoreDoc -> getDocumentFromScoreDoc(scoreDoc, reader))

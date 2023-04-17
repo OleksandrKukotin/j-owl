@@ -83,13 +83,18 @@ public class IndexController {
         Map<String, ParsedHtmlPage> parsedPages = htmlParser.parse(seedUrl, new HashMap<>(), depth, new HashSet<>());
         indexService.indexDocuments(parsedPages);
         stopWatch.stop();
+<<<<<<< HEAD
         logger.info("The indexing process is done. Elapsed time: {} sec.", stopWatch.getLastTaskInfo().getTimeSeconds());
 >>>>>>> b06d99c (Added PathVariable to /index endpoint and changed logging implementation)
+=======
+        logger.info("The indexing process is done. Elapsed time: {} sec. Number of indexed documents: {}.",
+            stopWatch.getLastTaskInfo().getTimeSeconds(), indexService.countIndexedDocuments());
+>>>>>>> 3f63f6f (Minor updates)
     }
 
-    @GetMapping("/show")
+    @GetMapping("/show/{numberOfDocuments}")
     @ResponseStatus(HttpStatus.OK)
-    public List<IndexDto> showIndex() {
-        return indexService.getAllIndexedDocuments();
+    public List<IndexDto> showIndex(@PathVariable int numberOfDocuments) {
+        return indexService.showCertainNumberOfDocuments(numberOfDocuments);
     }
 }

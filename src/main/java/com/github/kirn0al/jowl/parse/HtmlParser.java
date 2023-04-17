@@ -9,6 +9,7 @@ package com.github.kirn0al.jowl.parse;
 >>>>>>> 81b5b0e (Renamed core package):src/main/java/com/github/kirn0al/jowl/parse/HtmlParser.java
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -76,7 +77,11 @@ public class HtmlParser {
     private static final Pattern MEDIA_PATTERN = Pattern.compile("\\.(png|jpe?g|gif|bmp|webp|svgz?|pdf)$");
     private static final String CSS_QUERY = "a[href]";
     private static final int STOP_DEPTH = 1;
+<<<<<<< HEAD
 >>>>>>> 053647a (Small refactor of HtmlParser and minor updates of IndexController according to the parser class changes):src/main/java/com/github/pawawudaf/jowl/parse/HtmlParser.java
+=======
+    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36";
+>>>>>>> 3f63f6f (Minor updates)
 
     private final Set<String> visitedUrls;
     private final Queue<String> urlsToVisit;
@@ -208,6 +213,7 @@ public class HtmlParser {
     private ParsedHtmlPage fetchHtml(String url) {
 >>>>>>> 5651a41 (Completed ont of TODOs, for review another one)
         try {
+<<<<<<< HEAD
             Document html = Jsoup.connect(url).get();
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -223,7 +229,13 @@ public class HtmlParser {
             logger.error("Error fetching HTML from URL: " + url);
             return new HtmlPage();
 =======
+=======
+            // TODO: test if the connection with UserAgent doing well
+            Connection connection = Jsoup.connect(url);
+            connection.userAgent(USER_AGENT);
+>>>>>>> 3f63f6f (Minor updates)
 
+            Document html = connection.get();
             ParsedHtmlPage parsedHtmlPage = new ParsedHtmlPage();
             parsedHtmlPage.setTitle(html.title());
             parsedHtmlPage.setBody(html.body());
