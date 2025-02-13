@@ -1,20 +1,41 @@
-# JOwl - Java Owl
-JOwl is a web-based crawler engine powered by Java and a number of other technologies, including Spring Boot, Lucene, Docker, JUnit5, JSP, and more. In Native American folklore, the Owl is often associated with wisdom and the ability to guide those who are lost, and JOwl aims to serve a similar purpose for those searching for information on the web.
+# **JOwl - Developer Docs & API Search Engine** 🦉
 
-## Technologies
-JOwl is built using the following technologies:
+JOwl is a **focused web search engine** designed to index and retrieve **developer documentation and API references** better than traditional search engines.
 
-- Java 17
-- Spring Boot (with interceptors?)
-- Gradle
-- Lucene
-- Docker
-- JUnit5
-- JSP
-- GitlabCI or Jenkins
-- Groovy
-- jsoup
-- Swagger
+Tired of Google burying useful docs under SEO spam? **JOwl** is here to fix that.
 
-## Usage
-To use JOwl, simply visit the website and enter your search query. The results will be displayed in a list, with relevant information such as the title of the page, a description, and a link to the source.
+## **🚀 Features (MVP Goals)**
+✔ **Web Crawler** – Automatically fetches API docs & dev resources  
+✔ **Lucene-Powered Search** – Fast, relevance-based querying  
+✔ **REST API** – Simple interface to search and retrieve results  
+✔ **Minimal UI** – Lightweight search interface (JSP/Swagger UI)
+
+## **🛠 Tech Stack**
+- **Java 17** – Core language
+- **Spring Boot** – API backend
+- **Lucene** – Full-text search & indexing
+- **jsoup** – Web crawling & HTML parsing
+- **Gradle** – Build automation
+- **Docker** – Containerization
+- **GitLab CI/CD or Jenkins** – Deployment automation
+
+## **🛤 Roadmap**
+### **Phase 1: Core MVP (Foundation)**
+✅ **Crawl & index developer docs** (title + content)  
+✅ **Expose a REST API for search queries**  
+✅ **Basic search ranking & filtering**
+
+### **Phase 2: Enhancements**
+🔹 **Autocomplete & fuzzy search**  
+🔹 **Code snippet extraction**  
+🔹 **Advanced ranking (AI-powered relevance scoring)**  
+🔹 **Dark-mode UI (because developers love it)**
+
+### **Phase 3: Expansion**
+🚀 **Index GitHub Wiki & README files**  
+🚀 **Monitor & auto-update indexed data**  
+🚀 **Support for additional data formats (Swagger, OpenAPI, Postman)**
+
+## **🔧 Setup & Usage**
+*(To be added after MVP implementation)*
+
