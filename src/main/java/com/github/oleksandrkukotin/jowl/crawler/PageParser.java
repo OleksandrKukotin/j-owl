@@ -1,13 +1,12 @@
 package com.github.oleksandrkukotin.jowl.crawler;
 
 import org.jsoup.nodes.Document;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Component
 public class PageParser {
-
-    public PageParser() {}
 
     public CrawledPage parsePage(String url, Document document) {
         if (document == null) return null;
