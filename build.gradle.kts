@@ -19,6 +19,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.18.3")
 
     implementation("org.springframework.boot:spring-boot-starter:$springBootStarterVer")
+    implementation("org.springframework.boot:spring-boot-starter-web:$springBootStarterVer")
     testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootStarterVer")
 }
 
