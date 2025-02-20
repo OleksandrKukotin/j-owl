@@ -13,7 +13,7 @@ public class CrawlController {
     }
 
     @GetMapping("/crawl/{depth}")
-    public String crawl(@RequestParam String url, @PathVariable("depth") int depth) {
+    public String crawl(@RequestParam("url") String url, @PathVariable("depth") int depth) {
         crawlService.crawlRecursively(url, depth);
         return "Crawl started :]";
     }
