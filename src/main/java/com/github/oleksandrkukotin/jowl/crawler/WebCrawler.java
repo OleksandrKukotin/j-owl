@@ -16,10 +16,13 @@ public class WebCrawler {
 
     public Document fetchPage(String url) {
         try {
-            return Jsoup.connect(url)
+            Document page = Jsoup.connect(url)
                     .userAgent(USER_AGENT)
                     .timeout(10 * 1000)
                     .get();
+            String log = "Page fetched: " + page.title();
+            logger.info(log);
+            return page;
         } catch (Exception e) {
             logger.error(e.getMessage());
             return null;

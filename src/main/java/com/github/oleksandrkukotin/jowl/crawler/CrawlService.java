@@ -13,6 +13,8 @@ public class CrawlService {
     private final PageParser pageParser;
     private final Set<String> visitedUrls = new HashSet<>();
 
+    // TODO: add pages counter
+
     public CrawlService(WebCrawler webCrawler, PageParser pageParser) {
         this.webCrawler = webCrawler;
         this.pageParser = pageParser;
