@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class CrawlService {
@@ -13,7 +14,7 @@ public class CrawlService {
     private final PageParser pageParser;
     private final Set<String> visitedUrls = new HashSet<>();
 
-    // TODO: add pages counter
+    private final AtomicInteger crawlCounter = new AtomicInteger(0);
 
     public CrawlService(WebCrawler webCrawler, PageParser pageParser) {
         this.webCrawler = webCrawler;
@@ -24,11 +25,20 @@ public class CrawlService {
         if (depth <= 0 || visitedUrls.contains(url)) return;
 
         visitedUrls.add(url);
+        crawlCounter.incrementAndGet();
         Document doc = webCrawler.fetchPage(url);
         CrawledPage page = pageParser.parsePage(url, doc);
 
         if (page != null) {
             page.links().forEach(link -> crawlRecursively(link, depth - 1));
         }
+    }
+
+    public int getCrawlCount() {
+        return crawlCounter.get();
+    }
+
+    public void resetCrawlCounter() {
+        crawlCounter.set(0);
     }
 }
