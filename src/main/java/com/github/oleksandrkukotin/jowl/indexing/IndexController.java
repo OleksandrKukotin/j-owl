@@ -16,7 +16,8 @@ public class IndexController {
     }
 
     @GetMapping("/search")
-    public List<Document> search(@RequestParam String query, @RequestParam(defaultValue = "10") int limit) {
+    public List<Document> search(@RequestParam("query") String query,
+                                 @RequestParam(name = "maxResults", defaultValue = "10") int limit) {
         return indexService.search(query, limit);
     }
 
