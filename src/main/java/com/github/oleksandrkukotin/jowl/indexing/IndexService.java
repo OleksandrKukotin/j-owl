@@ -40,4 +40,12 @@ public class IndexService {
             return new ArrayList<>();
         }
     }
+
+    public void resetIndex() {
+        try {
+            indexer.clearIndex();
+        } catch (IOException e) {
+            throw new IndexingException(e.getMessage());
+        }
+    }
 }

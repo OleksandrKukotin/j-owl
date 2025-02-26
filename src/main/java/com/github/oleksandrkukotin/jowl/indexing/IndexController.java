@@ -1,10 +1,7 @@
 package com.github.oleksandrkukotin.jowl.indexing;
 
 import org.apache.lucene.document.Document;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +18,10 @@ public class IndexController {
     @GetMapping("/search")
     public List<Document> search(@RequestParam String query, @RequestParam(defaultValue = "10") int limit) {
         return indexService.search(query, limit);
+    }
+
+    @DeleteMapping("/reset")
+    public void reset() {
+        indexService.resetIndex();
     }
 }

@@ -4,13 +4,18 @@ import com.github.oleksandrkukotin.jowl.crawler.CrawledPage;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class DocumentIndexer {
+
+    private static final int MAX_TERM_LENGTH = 32766;
 
     private final IndexWriter indexWriter;
 
@@ -19,12 +24,37 @@ public class DocumentIndexer {
     }
 
     public void index(CrawledPage page) throws IOException {
-        Document doc = new Document();
-        doc.add(new StringField("url", page.url(), Field.Store.YES));
-        doc.add(new StringField("title", page.title(), Field.Store.YES));
-        doc.add(new StringField("content", page.content(), Field.Store.YES));
-
+        Document doc = createLuceneDocument(page);
         indexWriter.addDocument(doc);
         indexWriter.commit();
+    }
+
+    private Document createLuceneDocument(CrawledPage page) {
+        Document doc = new Document();
+        doc.add(new StringField("url", page.url(), Field.Store.YES));
+        doc.add(new TextField("title", page.title(), Field.Store.YES));
+
+        String content = page.content();
+        if (content.length() > MAX_TERM_LENGTH) {
+            List<String> chunks = splitText(content);
+            for (String chunk : chunks) {
+                doc.add(new TextField("content", chunk, Field.Store.YES));
+            }
+        } else {
+            doc.add(new TextField("content", content, Field.Store.YES));
+        }
+        return doc;
+    }
+
+    private List<String> splitText(String text) {
+        List<String> parts = new ArrayList<>();
+        for (int i = 0; i < text.length(); i += MAX_TERM_LENGTH) {
+            parts.add(text.substring(i, Math.min(i + MAX_TERM_LENGTH, text.length())));
+        }
+        return parts;
+    }
+
+    public void clearIndex() throws IOException {
+        indexWriter.deleteAll();
     }
 }
