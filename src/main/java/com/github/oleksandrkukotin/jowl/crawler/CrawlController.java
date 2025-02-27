@@ -14,7 +14,7 @@ public class CrawlController {
 
     @GetMapping("/crawl/{depth}")
     public String crawl(@RequestParam("url") String url, @PathVariable("depth") int depth) {
-        crawlService.crawlRecursively(url, depth);
+        crawlService.submitCrawlTask(url, depth);
         return String.format("Crawl finished :]%n%d pages crawled with depth %d", crawlService.getCrawlCount(), depth);
     }
 

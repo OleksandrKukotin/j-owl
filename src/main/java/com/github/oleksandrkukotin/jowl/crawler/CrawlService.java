@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -18,9 +20,10 @@ public class CrawlService {
     private final WebCrawler webCrawler;
     private final PageParser pageParser;
     private final IndexService indexService;
-    private final Set<String> visitedUrls = new HashSet<>();
+    private final ExecutorService executorService = Executors.newFixedThreadPool(12);
 
     private final AtomicInteger crawlCounter = new AtomicInteger(0);
+    private final Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
 
     public CrawlService(WebCrawler webCrawler, PageParser pageParser, IndexService indexService) {
         this.webCrawler = webCrawler;
@@ -28,7 +31,11 @@ public class CrawlService {
         this.indexService = indexService;
     }
 
-    public void crawlRecursively(String url, int depth) {
+    public void submitCrawlTask(String url, int depth) {
+        executorService.submit(() -> crawlRecursively(url, depth));
+    }
+
+    private void crawlRecursively(String url, int depth) {
         if (depth <= 0 || visitedUrls.contains(url)) return;
 
         visitedUrls.add(url);
@@ -38,7 +45,7 @@ public class CrawlService {
 
         if (page != null) {
             indexService.indexDocument(page);
-            page.links().forEach(link -> crawlRecursively(link, depth - 1));
+            page.links().forEach(link -> executorService.submit(() -> crawlRecursively(link, depth - 1)));
             logger.info("Crawling & indexing complete for {}", url);
         }
     }
