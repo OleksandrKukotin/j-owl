@@ -21,6 +21,7 @@ dependencies {
 
     implementation("org.apache.lucene:lucene-core:$apacheLuceneVer")
     implementation("org.apache.lucene:lucene-queryparser:$apacheLuceneVer")
+    implementation("org.apache.lucene:lucene-highlighter:$apacheLuceneVer")
     implementation("org.apache.lucene:lucene-analyzers-common:$apacheLuceneAnalyzersVer")
 
     implementation("org.jsoup:jsoup:$jSoupVer")
