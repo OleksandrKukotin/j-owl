@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebCrawler {
 
-    private static final Logger logger = LoggerFactory.getLogger(CrawlService.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebCrawler.class);
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
             "(KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36";
@@ -20,8 +20,7 @@ public class WebCrawler {
                     .userAgent(USER_AGENT)
                     .timeout(10 * 1000)
                     .get();
-            String log = "Page fetched: " + page.title();
-            logger.info(log);
+            logger.info("Page fetched: {}", page.title());
             return page;
         } catch (Exception e) {
             logger.error(e.getMessage());

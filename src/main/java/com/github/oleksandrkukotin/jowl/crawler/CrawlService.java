@@ -46,7 +46,7 @@ public class CrawlService {
         if (page != null) {
             indexService.indexDocument(page);
             page.links().forEach(link -> executorService.submit(() -> crawlRecursively(link, depth - 1)));
-            logger.info("Crawling & indexing complete for {}", url);
+            logger.info("Crawling & indexing complete at {}th depth for {}", depth, url);
         }
     }
 
