@@ -29,6 +29,8 @@ public class CrawlService {
     private final AtomicInteger crawlCounter = new AtomicInteger(0);
     private final Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
 
+    private volatile boolean isStopped = false;
+
     public CrawlService(WebCrawler webCrawler, PageParser pageParser, IndexService indexService,
                         @Value("${crawler.thread.pool.size}") int threadPoolSize) {
         this.webCrawler = webCrawler;
@@ -38,11 +40,15 @@ public class CrawlService {
     }
 
     public void submitCrawlTask(String url, int depth) {
+        isStopped = false;
         executorService.submit(() -> crawlRecursively(url, depth));
     }
 
     private void crawlRecursively(String url, int depth) {
-        if (depth <= 0 || !visitedUrls.add(url)) return;
+        if (depth <= 0 || !visitedUrls.add(url) || isStopped) {
+            logger.info("Crawling is stopped, {} pages crawled and indexed", crawlCounter.get());
+            return;
+        }
 
         crawlCounter.incrementAndGet();
         Optional<Document> doc = webCrawler.fetchPage(url);
@@ -61,17 +67,9 @@ public class CrawlService {
         logger.info("Crawling & indexing complete at {}th depth for {}", depth, url);
     }
 
-    public int getCrawlCount() {
-        return crawlCounter.get();
-    }
-
-    public void resetCrawlCounter() {
-        crawlCounter.set(0);
-    }
-
-    @PreDestroy
-    public void shutdownExecutorService() {
-        logger.info("Shutting down executor");
+    public void stopCrawl() {
+        logger.info("Stopping crawl...");
+        isStopped = true;
         executorService.shutdown();
         try {
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -85,5 +83,18 @@ public class CrawlService {
             executorService.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    public int getCrawlCount() {
+        return crawlCounter.get();
+    }
+
+    public void resetCrawlCounter() {
+        crawlCounter.set(0);
+    }
+
+    @PreDestroy
+    public void shutdownExecutorService() {
+        stopCrawl();
     }
 }
