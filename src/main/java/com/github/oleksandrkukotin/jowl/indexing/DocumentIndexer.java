@@ -26,7 +26,6 @@ public class DocumentIndexer {
     public void index(CrawledPage page) throws IOException {
         Document doc = createLuceneDocument(page);
         indexWriter.addDocument(doc);
-        indexWriter.commit();
     }
 
     private Document createLuceneDocument(CrawledPage page) {
@@ -52,6 +51,10 @@ public class DocumentIndexer {
             parts.add(text.substring(i, Math.min(i + MAX_TERM_LENGTH, text.length())));
         }
         return parts;
+    }
+
+    public void commit() throws IOException {
+        indexWriter.commit();
     }
 
     public void clearIndex() throws IOException {

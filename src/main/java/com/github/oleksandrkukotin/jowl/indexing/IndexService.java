@@ -41,6 +41,14 @@ public class IndexService {
         }
     }
 
+    public void commitIndex() {
+        try {
+            indexer.commit();
+        } catch (IOException e) {
+            throw new IndexingException(e.getMessage());
+        }
+    }
+
     public void resetIndex() {
         try {
             indexer.clearIndex();
