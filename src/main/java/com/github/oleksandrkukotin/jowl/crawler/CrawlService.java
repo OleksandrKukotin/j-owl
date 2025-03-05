@@ -77,6 +77,7 @@ public class CrawlService {
                 var droppedTasks = executorService.shutdownNow();
                 logger.warn("ExecutorService was abruptly dropped. {} task(s) will not be executed",
                         droppedTasks.size());
+                crawlCounter.set(0);
             }
         } catch (InterruptedException e) {
             logger.warn("Interrupted while shutting down executor");
@@ -85,12 +86,12 @@ public class CrawlService {
         }
     }
 
-    public int getCrawlCount() {
-        return crawlCounter.get();
+    public String getCrawlerStatus() {
+        return isStopped ? "Crawler is stopped" : "Crawler is running";
     }
 
-    public void resetCrawlCounter() {
-        crawlCounter.set(0);
+    public int getCrawlCount() {
+        return crawlCounter.get();
     }
 
     @PreDestroy

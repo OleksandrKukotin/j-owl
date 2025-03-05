@@ -14,9 +14,10 @@ public class CrawlController {
     }
 
     @PostMapping("/crawl/{depth}")
-    public String crawl(@RequestParam("url") String url, @PathVariable("depth") int depth) {
+    public ResponseEntity<String> crawl(@RequestParam("url") String url, @PathVariable("depth") int depth) {
         crawlService.submitCrawlTask(url, depth);
-        return String.format("Crawl finished :]%n%d pages crawled with depth %d", crawlService.getCrawlCount(), depth);
+        return ResponseEntity.ok("Crawling started, you can check number of crawled pages by /counter endpoint" +
+                "or stop the process by passing /crawl/stop endpoint");
     }
 
     @PostMapping("/crawl/stop")
@@ -25,13 +26,14 @@ public class CrawlController {
         return ResponseEntity.ok("Crawling process is stopped");
     }
 
-    @GetMapping("/counter")
-    public int getCrawlCounter() {
-        return crawlService.getCrawlCount();
+    @GetMapping("/crawl/status")
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok(crawlService.getCrawlerStatus());
     }
 
-    @DeleteMapping("/counter/reset")
-    public void resetCrawlCounter() {
-        crawlService.resetCrawlCounter();
+    @GetMapping("/counter")
+    public ResponseEntity<String> getCrawlCounter() {
+        String output = String.format("%d pages crawled, need to commit index after stop", crawlService.getCrawlCount());
+        return ResponseEntity.ok(output);
     }
 }
