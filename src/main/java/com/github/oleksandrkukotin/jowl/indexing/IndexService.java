@@ -28,7 +28,7 @@ public class IndexService {
         try {
             indexer.index(page);
         } catch (IOException e) {
-            throw new IndexingException(e.getMessage());
+            throw new IndexingException(e.getMessage(), e);
         }
     }
 
@@ -36,7 +36,7 @@ public class IndexService {
         try {
             return searcher.search(query, maxResults);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error during search with query {}", query, e);
             return new ArrayList<>();
         }
     }
@@ -45,7 +45,7 @@ public class IndexService {
         try {
             indexer.commit();
         } catch (IOException e) {
-            throw new IndexingException(e.getMessage());
+            throw new IndexingException(e.getMessage(), e);
         }
     }
 
@@ -53,7 +53,7 @@ public class IndexService {
         try {
             indexer.clearIndex();
         } catch (IOException e) {
-            throw new IndexingException(e.getMessage());
+            throw new IndexingException(e.getMessage(), e);
         }
     }
 }

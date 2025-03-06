@@ -30,13 +30,13 @@ public class DocumentSearcher {
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
     public static final String CONTENT_FIELD_NAME = "content";
 
+    private final Analyzer analyzer = new StandardAnalyzer();
     private final IndexSearcher indexSearcher;
     private final QueryParser queryParser;
-    private final Analyzer analyzer = new StandardAnalyzer();
 
     public DocumentSearcher(IndexSearcher indexSearcher) {
         this.indexSearcher = indexSearcher;
-        this.queryParser = new QueryParser(CONTENT_FIELD_NAME, new StandardAnalyzer());
+        this.queryParser = new QueryParser(CONTENT_FIELD_NAME, analyzer);
     }
 
     public List<Document> search(String queryString, int maxResults) throws ParseException, IOException {
@@ -65,12 +65,16 @@ public class DocumentSearcher {
                     if (text != null && !text.isBlank()) {
                         try (TokenStream stream = analyzer.tokenStream(CONTENT_FIELD_NAME, new StringReader(text))) {
                             String highlightedText = highlighter.getBestFragment(stream, text);
-                            doc.add(new TextField("snippet", highlightedText, Field.Store.YES));
+                            if (highlightedText != null) {
+                                doc.add(new TextField("snippet", highlightedText, Field.Store.YES));
+                            }
+                            doc.removeField(CONTENT_FIELD_NAME);
                             doc.add(new TextField(CONTENT_FIELD_NAME, text, Field.Store.YES));
                         } catch (IOException e) {
-                            throw new IndexSearchException(e.getMessage());
+                            throw new IndexSearchException(e.getMessage(), e);
                         } catch (InvalidTokenOffsetsException e) {
                             logger.error("Highlighting failed for text {}", text, e);
+                            throw new IndexSearchException(e.getMessage(), e);
                         }
                     }
                     return doc;
