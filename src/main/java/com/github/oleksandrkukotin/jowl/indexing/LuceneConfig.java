@@ -8,6 +8,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -32,5 +33,12 @@ public class LuceneConfig {
     @Bean
     public IndexSearcher indexSearcher(FSDirectory directory) throws IOException {
         return new IndexSearcher(DirectoryReader.open(directory));
+    }
+
+    @Bean
+    Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        builder.indentOutput(true);
+        return builder;
     }
 }
