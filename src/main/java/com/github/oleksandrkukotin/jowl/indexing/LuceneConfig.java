@@ -6,22 +6,23 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Configuration
 public class LuceneConfig {
 
-    private static final String INDEX_DIR = "lucene_index";
+    @Value("${lucene.index.dir}")
+    private String indexDir;
 
     @Bean
-    public static FSDirectory luceneDirectory() throws IOException {
-        return FSDirectory.open(Paths.get(INDEX_DIR));
+    public FSDirectory luceneDirectory() throws IOException {
+        return FSDirectory.open(Paths.get(indexDir));
     }
 
     @Bean
