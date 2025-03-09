@@ -1,0 +1,219 @@
+{
+  "name": "J-Owl",
+  "version": "1",
+  "items": [
+    {
+      "type": "folder",
+      "name": "Crawler",
+      "items": [
+        {
+          "type": "http",
+          "name": "Crawl request",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/crawler/crawl/3?url=https://docs.oracle.com/en/java/javase/17/docs/api",
+            "method": "POST",
+            "headers": [],
+            "params": [
+              {
+                "name": "url",
+                "value": "https://docs.oracle.com/en/java/javase/17/docs/api",
+                "type": "query",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get crawler counter",
+          "seq": 4,
+          "request": {
+            "url": "http://localhost:8080/crawler/counter",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get crawler status",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/crawler/crawl/status",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Stop crawl request",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/crawler/crawl/stop",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Index",
+      "items": [
+        {
+          "type": "http",
+          "name": "Index commit",
+          "seq": 2,
+          "request": {
+            "url": "http://localhost:8080/index/commit",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Index search",
+          "seq": 1,
+          "request": {
+            "url": "http://localhost:8080/index/search?query=String",
+            "method": "GET",
+            "headers": [],
+            "params": [
+              {
+                "name": "query",
+                "value": "String",
+                "type": "query",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Reset index",
+          "seq": 3,
+          "request": {
+            "url": "http://localhost:8080/index/reset",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "environments": [],
+  "brunoConfig": {
+    "version": "1",
+    "name": "J-Owl",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.0010728836059570312,
+    "filesCount": 8
+  }
+}
