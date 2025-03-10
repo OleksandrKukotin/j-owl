@@ -4,7 +4,6 @@ import com.github.oleksandrkukotin.jowl.exception.IndexSearchException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.StoredFields;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +29,7 @@ public class DocumentSearcher {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
     public static final String CONTENT_FIELD_NAME = "content";
+    public static final int SNIPPET_SIZE = 50;
 
     private final Analyzer analyzer = new StandardAnalyzer();
     private final IndexSearcher indexSearcher;
@@ -39,7 +40,7 @@ public class DocumentSearcher {
         this.queryParser = new QueryParser(CONTENT_FIELD_NAME, analyzer);
     }
 
-    public List<Document> search(String queryString, int maxResults) throws ParseException, IOException {
+    public List<SearchResult> search(String queryString, int maxResults) throws ParseException, IOException {
         logger.info("Executing search for query: '{}' with max results: {}", queryString, maxResults);
         Query query = queryParser.parse(queryString);
         TopDocs topDocs = indexSearcher.search(query, maxResults);
@@ -48,9 +49,9 @@ public class DocumentSearcher {
         SimpleHTMLFormatter boldFormatter = new SimpleHTMLFormatter("<b>", "</b>");
         QueryScorer scorer = new QueryScorer(query);
         Highlighter highlighter = new Highlighter(boldFormatter, scorer);
-        highlighter.setTextFragmenter(new SimpleFragmenter(50));
+        highlighter.setTextFragmenter(new SimpleFragmenter(SNIPPET_SIZE));
 
-        List<Document> results = Arrays.stream(topDocs.scoreDocs)
+        List<SearchResult> results = Arrays.stream(topDocs.scoreDocs)
                 .map(scoreDoc -> {
                     try {
                         return storedFields.document(scoreDoc.doc);
@@ -59,7 +60,6 @@ public class DocumentSearcher {
                         return null;
                     }
                 })
-                .filter(Objects::nonNull)
                 .map(doc -> {
                     String text = doc.get(CONTENT_FIELD_NAME);
                     if (text != null && !text.isBlank()) {
@@ -79,8 +79,8 @@ public class DocumentSearcher {
                     }
                     return doc;
                 })
+                .map(SearchResult::new)
                 .toList();
-
         logger.info("Search completed. Found {} results.", results.size());
         return results;
     }

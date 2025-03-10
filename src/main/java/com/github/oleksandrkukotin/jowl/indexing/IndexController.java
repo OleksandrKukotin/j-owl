@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
 @RequestMapping("/index")
 public class IndexController {
@@ -16,8 +18,8 @@ public class IndexController {
         this.indexService = indexService;
     }
 
-    @GetMapping("/search")
-    public List<Document> search(@RequestParam("query") String query,
+    @GetMapping(value = "/search", produces = APPLICATION_JSON_VALUE)
+    public List<SearchResult> search(@RequestParam("query") String query,
                                  @RequestParam(name = "maxResults", defaultValue = "10") int limit) {
         return indexService.search(query, limit);
     }

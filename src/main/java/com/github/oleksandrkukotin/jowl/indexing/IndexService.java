@@ -32,7 +32,7 @@ public class IndexService {
         }
     }
 
-    public List<Document> search(String query, int maxResults) {
+    public List<SearchResult> search(String query, int maxResults) {
         try {
             return searcher.search(query, maxResults);
         } catch (Exception e) {
