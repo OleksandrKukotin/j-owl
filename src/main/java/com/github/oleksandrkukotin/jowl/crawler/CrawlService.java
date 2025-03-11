@@ -1,5 +1,7 @@
 package com.github.oleksandrkukotin.jowl.crawler;
 
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocPageParser;
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocWebCrawler;
 import com.github.oleksandrkukotin.jowl.indexing.IndexService;
 import jakarta.annotation.PreDestroy;
 import org.jsoup.nodes.Document;
@@ -21,8 +23,8 @@ public class CrawlService {
 
     private static final Logger logger = LoggerFactory.getLogger(CrawlService.class);
 
-    private final WebCrawler webCrawler;
-    private final PageParser pageParser;
+    private final JavadocWebCrawler javadocWebCrawler;
+    private final JavadocPageParser javadocPageParser;
     private final IndexService indexService;
     private final ExecutorService executorService;
 
@@ -31,10 +33,10 @@ public class CrawlService {
 
     private volatile boolean isStopped = false;
 
-    public CrawlService(WebCrawler webCrawler, PageParser pageParser, IndexService indexService,
+    public CrawlService(JavadocWebCrawler javadocWebCrawler, JavadocPageParser javadocPageParser, IndexService indexService,
                         @Value("${crawler.thread.pool.size}") int threadPoolSize) {
-        this.webCrawler = webCrawler;
-        this.pageParser = pageParser;
+        this.javadocWebCrawler = javadocWebCrawler;
+        this.javadocPageParser = javadocPageParser;
         this.indexService = indexService;
         this.executorService = Executors.newFixedThreadPool(threadPoolSize);
     }
@@ -51,12 +53,12 @@ public class CrawlService {
         }
 
         crawlCounter.incrementAndGet();
-        Optional<Document> doc = webCrawler.fetchPage(url);
+        Optional<Document> doc = javadocWebCrawler.fetchPage(url);
         if (doc.isEmpty()) {
             logger.info("No page found for {}", url);
             return;
         }
-        Optional<CrawledPage> page = pageParser.parsePage(url, doc.get());
+        Optional<CrawledPage> page = javadocPageParser.parsePage(url, doc.get());
 
         if (page.isEmpty()) {
             logger.info("No page found for {}", url);
