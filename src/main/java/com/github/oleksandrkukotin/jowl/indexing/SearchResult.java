@@ -10,10 +10,20 @@ public class SearchResult {
 //    private String content;
 
     public SearchResult(Document document) {
-        this.title = document.get("title");
         this.url = document.get("url");
+        this.title = generateTitle(document);
         this.snippet = document.get("snippet");
 //        this.content = document.get("content");
+    }
+
+    private String generateTitle(Document document) {
+        String rawTitle = document.get("title");
+
+        if (this.url.contains("#")) {
+            String methodName = this.url.substring(url.indexOf("#") + 1);
+            return rawTitle + " " + methodName;
+        }
+        return rawTitle;
     }
 
     public String getTitle() {

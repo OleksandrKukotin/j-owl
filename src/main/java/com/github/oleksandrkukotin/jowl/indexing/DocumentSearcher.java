@@ -19,17 +19,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class DocumentSearcher {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
     public static final String CONTENT_FIELD_NAME = "content";
-    public static final int SNIPPET_SIZE = 50;
+    public static final int SNIPPET_SIZE = 100;
 
     private final Analyzer analyzer = new StandardAnalyzer();
     private final IndexSearcher indexSearcher;
