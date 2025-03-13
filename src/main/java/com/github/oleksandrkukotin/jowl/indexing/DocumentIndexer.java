@@ -1,6 +1,6 @@
 package com.github.oleksandrkukotin.jowl.indexing;
 
-import com.github.oleksandrkukotin.jowl.crawler.CrawledPage;
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -23,12 +23,12 @@ public class DocumentIndexer {
         this.indexWriter = indexWriter;
     }
 
-    public void index(CrawledPage page) throws IOException {
+    public void index(JavadocCrawledPage page) throws IOException {
         Document doc = createLuceneDocument(page);
         indexWriter.addDocument(doc);
     }
 
-    private Document createLuceneDocument(CrawledPage page) {
+    private Document createLuceneDocument(JavadocCrawledPage page) {
         Document doc = new Document();
         doc.add(new StringField("url", page.url(), Field.Store.YES));
         doc.add(new TextField("title", page.title(), Field.Store.YES));

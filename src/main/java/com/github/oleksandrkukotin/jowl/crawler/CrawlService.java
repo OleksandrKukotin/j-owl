@@ -1,5 +1,6 @@
 package com.github.oleksandrkukotin.jowl.crawler;
 
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocPageParser;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocWebCrawler;
 import com.github.oleksandrkukotin.jowl.indexing.IndexService;
@@ -58,7 +59,7 @@ public class CrawlService {
             logger.info("No page found for {}", url);
             return;
         }
-        Optional<CrawledPage> page = javadocPageParser.parsePage(url, doc.get());
+        Optional<JavadocCrawledPage> page = javadocPageParser.parsePage(url, doc.get());
 
         if (page.isEmpty()) {
             logger.info("No page found for {}", url);

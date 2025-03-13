@@ -1,8 +1,7 @@
 package com.github.oleksandrkukotin.jowl.indexing;
 
-import com.github.oleksandrkukotin.jowl.crawler.CrawledPage;
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import com.github.oleksandrkukotin.jowl.exception.IndexingException;
-import org.apache.lucene.document.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class IndexService {
         this.searcher = searcher;
     }
 
-    public void indexDocument(CrawledPage page) {
+    public void indexDocument(JavadocCrawledPage page) {
         try {
             indexer.index(page);
         } catch (IOException e) {

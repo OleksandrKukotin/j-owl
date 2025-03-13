@@ -1,6 +1,5 @@
 package com.github.oleksandrkukotin.jowl.crawler.javadoc;
 
-import com.github.oleksandrkukotin.jowl.crawler.CrawledPage;
 import com.github.oleksandrkukotin.jowl.crawler.PageParser;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
@@ -13,7 +12,7 @@ import java.util.stream.Collectors;
 public class JavadocPageParser implements PageParser {
 
     @Override
-    public Optional<CrawledPage> parsePage(String url, Document document) {
+    public Optional<JavadocCrawledPage> parsePage(String url, Document document) {
         if (document == null) return Optional.empty();
 
         String title = document.title();
@@ -25,6 +24,6 @@ public class JavadocPageParser implements PageParser {
                 .filter(link -> !link.isEmpty() && !link.contains("#"))
                 .collect(Collectors.toSet());
 
-        return Optional.of(new CrawledPage(url, title, content, links));
+        return Optional.of(new JavadocCrawledPage(url, title, content, links));
     }
 }

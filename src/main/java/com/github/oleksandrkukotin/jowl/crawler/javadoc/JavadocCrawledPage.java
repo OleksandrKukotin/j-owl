@@ -1,8 +1,8 @@
-package com.github.oleksandrkukotin.jowl.crawler;
+package com.github.oleksandrkukotin.jowl.crawler.javadoc;
 
 import java.util.Set;
 
-public record CrawledPage(
+public record JavadocCrawledPage(
         String url,
         String title,
         String content,

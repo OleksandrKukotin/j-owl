@@ -1,10 +1,11 @@
 package com.github.oleksandrkukotin.jowl.crawler;
 
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import org.jsoup.nodes.Document;
 
 import java.util.Optional;
 
 public interface PageParser {
 
-    Optional<CrawledPage> parsePage(String url, Document document);
+    Optional<JavadocCrawledPage> parsePage(String url, Document document);
 }
