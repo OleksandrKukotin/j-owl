@@ -16,6 +16,7 @@ public class JavadocPageParser implements PageParser {
         if (document == null) return Optional.empty();
 
         String title = document.title();
+        // TODO: analyze and understand Javadoc page structure
         // TODO: make the parser parse only useful content
         String content = document.body().text();
         // TODO: make the parser stay only on one domain
