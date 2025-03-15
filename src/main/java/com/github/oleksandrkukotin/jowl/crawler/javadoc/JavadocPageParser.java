@@ -27,4 +27,22 @@ public class JavadocPageParser implements PageParser {
 
         return Optional.of(new JavadocCrawledPage(url, title, content, links));
     }
+
+//    @Override
+//    public Optional<JavadocCrawledPage> parsePage(String url, Document document) {
+//        if (document == null) return Optional.empty();
+//
+//        String title = document.select("h1, h2").first().text(); // Class name
+//        String packageName = document.select("div.subTitle").text(); // Package name
+//        String description = document.select("div.block").text(); // Class description
+//
+//        // Extract methods
+//        Set<String> methods = document.select("table.memberSummary tbody tr")
+//                .stream()
+//                .map(row -> row.select("td.colFirst a").text()) // Method name
+//                .filter(name -> !name.isEmpty())
+//                .collect(Collectors.toSet());
+//
+//        return Optional.of(new JavadocCrawledPage(url, title, packageName + "\n" + description, methods));
+//    }
 }
