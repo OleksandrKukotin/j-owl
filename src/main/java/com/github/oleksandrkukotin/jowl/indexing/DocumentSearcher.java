@@ -26,7 +26,7 @@ import java.util.List;
 public class DocumentSearcher {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
-    public static final String CONTENT_FIELD_NAME = "content";
+    public static final String CONTENT_FIELD_NAME = "classDescription";
     public static final int SNIPPET_SIZE = 100;
 
     private final Analyzer analyzer = new StandardAnalyzer();

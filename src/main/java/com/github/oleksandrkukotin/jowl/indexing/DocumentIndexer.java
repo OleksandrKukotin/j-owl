@@ -31,16 +31,16 @@ public class DocumentIndexer {
     private Document createLuceneDocument(JavadocCrawledPage page) {
         Document doc = new Document();
         doc.add(new StringField("url", page.url(), Field.Store.YES));
-        doc.add(new TextField("title", page.title(), Field.Store.YES));
+        doc.add(new TextField("className", page.className(), Field.Store.YES));
 
-        String content = page.content();
+        String content = page.classDescription();
         if (content.length() > MAX_TERM_LENGTH) {
             List<String> chunks = splitText(content);
             for (String chunk : chunks) {
-                doc.add(new TextField("content", chunk, Field.Store.YES));
+                doc.add(new TextField("classDescription", chunk, Field.Store.YES));
             }
         } else {
-            doc.add(new TextField("content", content, Field.Store.YES));
+            doc.add(new TextField("classDescription", content, Field.Store.YES));
         }
         return doc;
     }

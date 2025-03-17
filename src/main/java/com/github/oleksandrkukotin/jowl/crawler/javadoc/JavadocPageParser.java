@@ -2,6 +2,7 @@ package com.github.oleksandrkukotin.jowl.crawler.javadoc;
 
 import com.github.oleksandrkukotin.jowl.crawler.PageParser;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -11,22 +12,41 @@ import java.util.stream.Collectors;
 @Component
 public class JavadocPageParser implements PageParser {
 
+    // TO TEST
     @Override
     public Optional<JavadocCrawledPage> parsePage(String url, Document document) {
         if (document == null) return Optional.empty();
 
         Optional<String> optionalTitle = Optional.of(document.select("h1").text());
-        String title = optionalTitle.orElse("");
-        String packageName = document.select("div.subTitle").next("package").text(); // Package name
-        String description = document.select("div.block").text(); // Class description
+        String className = optionalTitle.orElse("");
+        String classDescription = document.select("div.block").text(); // Class description
+        Set<String> urls = extractLinks(document);
+        Set<JavadocMethod> methods = extractMethods(document);
 
-        // TODO: Extract methods correctly
-        Set<String> methods = document.select("table.memberSummary tbody tr")
-                .stream()
-                .map(row -> row.select("td.colFirst a").text()) // Method name
-                .filter(name -> !name.isEmpty())
+        return Optional.of(new JavadocCrawledPage(url, className, classDescription, urls, methods));
+    }
+
+    private Set<String> extractLinks(Document document) {
+        return document.select("a[href]").stream()
+                .map(link -> link.absUrl("href"))
+                .filter(link -> !link.isEmpty())
+                .filter(link -> !link.contains("#"))
                 .collect(Collectors.toSet());
+    }
 
-        return Optional.of(new JavadocCrawledPage(url, title, packageName + "\n" + description, methods));
+    private Set<JavadocMethod> extractMethods(Document document) {
+        return document.select("section#method-detail li.detail").stream()
+                .map(JavadocPageParser::parseMethod)
+                .collect(Collectors.toSet());
+    }
+
+    private static JavadocMethod parseMethod(Element methodElement) {
+        String methodName = methodElement.select("h3").text();
+        String modifiers = methodElement.select("span.modifiers").text();
+        String returnType = methodElement.select("span.return-type").text();
+        String fullSignature = methodElement.select("div.member-signature").text();
+        String methodDescription = methodElement.select("div.block").text();
+
+        return new JavadocMethod(methodName, modifiers, returnType, fullSignature, methodDescription);
     }
 }

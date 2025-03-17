@@ -7,17 +7,17 @@ public class SearchResult {
     private String title;
     private String url;
     private String snippet;
-//    private String content;
+//    private String classDescription;
 
     public SearchResult(Document document) {
         this.url = document.get("url");
         this.title = generateTitle(document);
         this.snippet = document.get("snippet");
-//        this.content = document.get("content");
+//        this.classDescription = document.get("classDescription");
     }
 
     private String generateTitle(Document document) {
-        String rawTitle = document.get("title");
+        String rawTitle = document.get("className");
 
         if (this.url.contains("#")) {
             String methodName = this.url.substring(url.indexOf("#") + 1);
@@ -51,10 +51,10 @@ public class SearchResult {
     }
 
 //    public String getContent() {
-//        return content;
+//        return classDescription;
 //    }
 //
-//    public void setContent(String content) {
-//        this.content = content;
+//    public void setContent(String classDescription) {
+//        this.classDescription = classDescription;
 //    }
 }
