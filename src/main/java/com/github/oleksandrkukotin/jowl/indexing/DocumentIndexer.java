@@ -1,6 +1,7 @@
 package com.github.oleksandrkukotin.jowl.indexing;
 
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
+import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocMethod;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -24,11 +25,35 @@ public class DocumentIndexer {
     }
 
     public void index(JavadocCrawledPage page) throws IOException {
-        Document doc = createLuceneDocument(page);
+        Document doc = createClassDocument(page);
         indexWriter.addDocument(doc);
+
+        for (JavadocMethod method : page.methods()) {
+            Document methodDoc = createMethodDocument(page.url(), method);
+            indexWriter.addDocument(methodDoc);
+        }
     }
 
-    private Document createLuceneDocument(JavadocCrawledPage page) {
+    private Document createMethodDocument(String url, JavadocMethod method) {
+        Document doc = new Document();
+        doc.add(new StringField("classUrl", url, Field.Store.YES));
+        doc.add(new StringField("methodName", method.name(), Field.Store.YES));
+        doc.add(new StringField("modifiers", method.modifiers(), Field.Store.YES));
+        doc.add(new StringField("returnType", method.returnType(), Field.Store.YES));
+        doc.add(new TextField("fullSignature", method.signature(), Field.Store.YES));
+
+        String methodDescription = method.description();
+        if (methodDescription.length() > MAX_TERM_LENGTH) {
+            for (String chunk : splitText(methodDescription)) {
+                doc.add(new TextField("chunk", chunk, Field.Store.YES));
+            }
+        } else {
+            doc.add(new TextField("description", methodDescription, Field.Store.YES));
+        }
+        return doc;
+    }
+
+    private Document createClassDocument(JavadocCrawledPage page) {
         Document doc = new Document();
         doc.add(new StringField("url", page.url(), Field.Store.YES));
         doc.add(new TextField("className", page.className(), Field.Store.YES));
