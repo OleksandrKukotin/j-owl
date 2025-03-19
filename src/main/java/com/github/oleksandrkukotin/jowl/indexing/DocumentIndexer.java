@@ -18,7 +18,6 @@ import java.util.List;
 @Component
 public class DocumentIndexer {
 
-
     private final IndexWriter indexWriter;
 
     @Value("${lucene.index.max.term.length}")
@@ -48,11 +47,11 @@ public class DocumentIndexer {
 
     private Document createMethodDocument(String url, JavadocMethod method) {
         Document doc = new Document();
-        doc.add(new StringField("classUrl", url, Field.Store.YES));
+        doc.add(new StringField("url", url, Field.Store.YES));
         doc.add(new StringField("methodName", method.name(), Field.Store.YES));
         doc.add(new StringField("modifiers", method.modifiers(), Field.Store.YES));
         doc.add(new StringField("returnType", method.returnType(), Field.Store.YES));
-        doc.add(new TextField("fullSignature", method.signature(), Field.Store.YES));
+        doc.add(new TextField("methodSignature", method.signature(), Field.Store.YES));
 
         String methodDescription = method.description();
         if (methodDescription.length() > maxTermLength) {

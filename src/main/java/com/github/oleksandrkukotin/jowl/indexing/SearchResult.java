@@ -2,18 +2,22 @@ package com.github.oleksandrkukotin.jowl.indexing;
 
 import org.apache.lucene.document.Document;
 
+import java.util.List;
+
 public class SearchResult {
 
     private String title;
     private String url;
     private String snippet;
-//    private String classDescription;
+    private String methodName;
+    private String methodSignature;
 
     public SearchResult(Document document) {
         this.url = document.get("url");
         this.title = generateTitle(document);
         this.snippet = document.get("snippet");
-//        this.classDescription = document.get("classDescription");
+        this.methodName = document.get("methodName");
+        this.methodSignature = document.get("methodSignature");
     }
 
     private String generateTitle(Document document) {
@@ -50,7 +54,23 @@ public class SearchResult {
         this.snippet = snippet;
     }
 
-//    public String getContent() {
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public String getMethodSignature() {
+        return methodSignature;
+    }
+
+    public void setMethodSignature(String methodSignature) {
+        this.methodSignature = methodSignature;
+    }
+
+    //    public String getContent() {
 //        return classDescription;
 //    }
 //

@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.StoredFields;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -26,8 +27,9 @@ import java.util.List;
 public class DocumentSearcher {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
-    public static final String CONTENT_FIELD_NAME = "classDescription";
     public static final int SNIPPET_SIZE = 100;
+    private static final String MAIN_SEARCH_FIELD = "classDescription";
+    private static final String SECOND_SEARCH_FIELD = "methodSignature";
 
     private final Analyzer analyzer = new StandardAnalyzer();
     private final IndexSearcher indexSearcher;
@@ -35,7 +37,7 @@ public class DocumentSearcher {
 
     public DocumentSearcher(IndexSearcher indexSearcher) {
         this.indexSearcher = indexSearcher;
-        this.queryParser = new QueryParser(CONTENT_FIELD_NAME, analyzer);
+        this.queryParser = new MultiFieldQueryParser(new String[]{MAIN_SEARCH_FIELD, SECOND_SEARCH_FIELD}, analyzer);
     }
 
     public List<SearchResult> search(String queryString, int maxResults) throws ParseException, IOException {
@@ -59,15 +61,15 @@ public class DocumentSearcher {
                     }
                 })
                 .map(doc -> {
-                    String text = doc.get(CONTENT_FIELD_NAME);
+                    String text = doc.get(MAIN_SEARCH_FIELD);
                     if (text != null && !text.isBlank()) {
-                        try (TokenStream stream = analyzer.tokenStream(CONTENT_FIELD_NAME, new StringReader(text))) {
+                        try (TokenStream stream = analyzer.tokenStream(MAIN_SEARCH_FIELD, new StringReader(text))) {
                             String highlightedText = highlighter.getBestFragment(stream, text);
                             if (highlightedText != null) {
                                 doc.add(new TextField("snippet", highlightedText, Field.Store.YES));
                             }
-                            doc.removeField(CONTENT_FIELD_NAME);
-                            doc.add(new TextField(CONTENT_FIELD_NAME, text, Field.Store.YES));
+                            doc.removeField(MAIN_SEARCH_FIELD);
+                            doc.add(new TextField(MAIN_SEARCH_FIELD, text, Field.Store.YES));
                         } catch (IOException e) {
                             throw new IndexSearchException(e.getMessage(), e);
                         } catch (InvalidTokenOffsetsException e) {
