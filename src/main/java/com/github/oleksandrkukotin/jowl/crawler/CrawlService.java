@@ -13,16 +13,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class CrawlService {
 
     private static final Logger logger = LoggerFactory.getLogger(CrawlService.class);
+
+    @Value("${crawler.concurrent.max.crawls}")
+    private int maxConcurrentCrawls;
+    private final Semaphore crawlSemaphore = new Semaphore(maxConcurrentCrawls);
 
     private final JavadocWebCrawler javadocWebCrawler;
     private final JavadocPageParser javadocPageParser;
@@ -35,7 +36,7 @@ public class CrawlService {
     private volatile boolean isStopped = false;
 
     public CrawlService(JavadocWebCrawler javadocWebCrawler, JavadocPageParser javadocPageParser, IndexService indexService,
-                        @Value("${crawler.thread.pool.size}") int threadPoolSize) {
+                        @Value("${crawler.concurrent.thread.pool.size}") int threadPoolSize) {
         this.javadocWebCrawler = javadocWebCrawler;
         this.javadocPageParser = javadocPageParser;
         this.indexService = indexService;
@@ -44,6 +45,19 @@ public class CrawlService {
 
     public void submitCrawlTask(String url, int depth) {
         isStopped = false;
+        try {
+            crawlSemaphore.acquire();
+            executorService.submit(() -> {
+                try {
+                    crawlRecursively(url, depth);
+                } finally {
+                    crawlSemaphore.release();
+                }
+            });
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("Interrupted while acquiring semaphore for initial task", e);
+        }
         executorService.submit(() -> crawlRecursively(url, depth));
     }
 
@@ -63,7 +77,21 @@ public class CrawlService {
             return;
         }
         indexService.indexDocument(page.get());
-        page.get().links().forEach(link -> executorService.submit(() -> crawlRecursively(link, depth - 1)));
+        page.get().links().forEach(link -> {
+            try {
+                crawlSemaphore.acquire();
+                executorService.submit(() -> {
+                    try {
+                        crawlRecursively(link, depth - 1);
+                    } finally {
+                        crawlSemaphore.release();
+                    }
+                });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                logger.error("Interrupted while acquiring semaphore for task", e);
+            }
+        });
         logger.info("Crawling & indexing complete at {}th depth for {}", depth, url);
     }
 
