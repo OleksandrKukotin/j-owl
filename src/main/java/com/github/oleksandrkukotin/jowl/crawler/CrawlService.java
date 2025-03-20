@@ -48,10 +48,7 @@ public class CrawlService {
     }
 
     private void crawlRecursively(String url, int depth) {
-        if (depth <= 0 || !visitedUrls.add(url) || isStopped) {
-            logger.info("Crawling is stopped, {} pages crawled and indexed", crawlCounter.get());
-            return;
-        }
+        if (isCrawlConditionsViolated(url, depth)) return;
 
         crawlCounter.incrementAndGet();
         Optional<Document> doc = javadocWebCrawler.fetchPage(url);
@@ -68,6 +65,23 @@ public class CrawlService {
         indexService.indexDocument(page.get());
         page.get().links().forEach(link -> executorService.submit(() -> crawlRecursively(link, depth - 1)));
         logger.info("Crawling & indexing complete at {}th depth for {}", depth, url);
+    }
+
+    private boolean isCrawlConditionsViolated(String url, int depth) {
+        if (depth <= 0) {
+            logger.info("Stopping crawl recursion at URL {} because the depth limit has been reached. {} pages crawled and indexed",
+                    url, crawlCounter.get());
+            return true;
+        }
+        if (!visitedUrls.add(url)) {
+            logger.info("Skipping crawl for URL {} since it has already been visited. {} pages crawled and indexed", url, crawlCounter.get());
+            return true;
+        }
+        if (isStopped) {
+            logger.info("Crawling was explicitly stopped. {} pages crawled and indexed", crawlCounter.get());
+            return true;
+        }
+        return false;
     }
 
     public void stopCrawl() {
