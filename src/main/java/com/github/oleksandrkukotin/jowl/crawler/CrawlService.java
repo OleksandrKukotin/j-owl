@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -33,7 +34,7 @@ public class CrawlService {
     private final AtomicInteger crawlCounter = new AtomicInteger(0);
     private final Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
 
-    private volatile boolean isStopped = false;
+    private final AtomicBoolean isStopped = new AtomicBoolean(true);
 
     public CrawlService(JavadocWebCrawler javadocWebCrawler, JavadocPageParser javadocPageParser, IndexService indexService,
                         @Value("${crawler.concurrent.thread.pool.size}") int threadPoolSize) {
@@ -44,7 +45,7 @@ public class CrawlService {
     }
 
     public void submitCrawlTask(String url, int depth) {
-        isStopped = false;
+        isStopped.set(false);
         try {
             crawlSemaphore.acquire();
             executorService.submit(() -> {
@@ -105,7 +106,7 @@ public class CrawlService {
             logger.info("Skipping crawl for URL {} since it has already been visited. {} pages crawled and indexed", url, crawlCounter.get());
             return true;
         }
-        if (isStopped) {
+        if (isStopped.get()) {
             logger.info("Crawling was explicitly stopped. {} pages crawled and indexed", crawlCounter.get());
             return true;
         }
@@ -114,7 +115,7 @@ public class CrawlService {
 
     public void stopCrawl() {
         logger.info("Stopping crawl...");
-        isStopped = true;
+        isStopped.set(true);
         executorService.shutdown();
         try {
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -132,7 +133,7 @@ public class CrawlService {
     }
 
     public String getCrawlerStatus() {
-        return isStopped ? "Crawler is stopped" : "Crawler is running";
+        return isStopped.get() ? "Crawler is stopped" : "Crawler is running";
     }
 
     public int getCrawlCount() {
