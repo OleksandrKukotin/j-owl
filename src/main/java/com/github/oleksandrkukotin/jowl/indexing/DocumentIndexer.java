@@ -45,9 +45,26 @@ public class DocumentIndexer {
         }
     }
 
+    private Document createClassDocument(JavadocCrawledPage page) {
+        Document doc = new Document();
+        doc.add(new StringField("classUrl", page.url(), Field.Store.YES));
+        doc.add(new TextField("className", page.className(), Field.Store.YES));
+
+        String content = page.classDescription();
+        if (content.length() > maxTermLength) {
+            List<String> chunks = splitText(content);
+            for (String chunk : chunks) {
+                doc.add(new TextField("classDescription", chunk, Field.Store.YES));
+            }
+        } else {
+            doc.add(new TextField("classDescription", content, Field.Store.YES));
+        }
+        return doc;
+    }
+
     private Document createMethodDocument(String url, JavadocMethod method) {
         Document doc = new Document();
-        doc.add(new StringField("url", url, Field.Store.YES));
+        doc.add(new StringField("parentClassUrl", url, Field.Store.YES));
         doc.add(new StringField("methodName", method.name(), Field.Store.YES));
         doc.add(new StringField("modifiers", method.modifiers(), Field.Store.YES));
         doc.add(new StringField("returnType", method.returnType(), Field.Store.YES));
@@ -60,23 +77,6 @@ public class DocumentIndexer {
             }
         } else {
             doc.add(new TextField("description", methodDescription, Field.Store.YES));
-        }
-        return doc;
-    }
-
-    private Document createClassDocument(JavadocCrawledPage page) {
-        Document doc = new Document();
-        doc.add(new StringField("url", page.url(), Field.Store.YES));
-        doc.add(new TextField("className", page.className(), Field.Store.YES));
-
-        String content = page.classDescription();
-        if (content.length() > maxTermLength) {
-            List<String> chunks = splitText(content);
-            for (String chunk : chunks) {
-                doc.add(new TextField("classDescription", chunk, Field.Store.YES));
-            }
-        } else {
-            doc.add(new TextField("classDescription", content, Field.Store.YES));
         }
         return doc;
     }
