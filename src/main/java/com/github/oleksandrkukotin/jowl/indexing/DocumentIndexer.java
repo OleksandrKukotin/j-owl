@@ -83,8 +83,30 @@ public class DocumentIndexer {
 
     private List<String> splitText(String text) {
         List<String> parts = new ArrayList<>();
-        for (int i = 0; i < text.length(); i += maxTermLength) {
-            parts.add(text.substring(i, Math.min(i + maxTermLength, text.length())));
+        StringBuilder currentPart = new StringBuilder();
+        for (String word : text.split("\\s+")) {
+            if (!currentPart.isEmpty()) {
+                if (currentPart.length() + 1 + word.length() > maxTermLength) {
+                    parts.add(currentPart.toString());
+                    currentPart = new StringBuilder(word);
+                } else {
+                    currentPart.append(" ").append(word);
+                }
+            } else {
+                if (word.length() > maxTermLength) {
+                    int index = 0;
+                    while (index < word.length()) {
+                        int end = Math.min(index + maxTermLength, word.length());
+                        parts.add(word.substring(index, end));
+                        index += maxTermLength;
+                    }
+                } else {
+                    currentPart.append(word);
+                }
+            }
+        }
+        if (!currentPart.isEmpty()) {
+            parts.add(currentPart.toString());
         }
         return parts;
     }
