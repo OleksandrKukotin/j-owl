@@ -19,6 +19,7 @@ import java.util.List;
 public class DocumentIndexer {
 
     private final IndexWriter indexWriter;
+    private final TextSplitter textSplitter;
 
     @Value("${lucene.index.max.term.length}")
     private int maxTermLength;
@@ -33,6 +34,7 @@ public class DocumentIndexer {
 
     public DocumentIndexer(IndexWriter indexWriter) {
         this.indexWriter = indexWriter;
+        this.textSplitter = new TextSplitter(maxTermLength);
     }
 
     public void index(JavadocCrawledPage page) throws IOException {
@@ -52,7 +54,7 @@ public class DocumentIndexer {
 
         String content = page.classDescription();
         if (content.length() > maxTermLength) {
-            List<String> chunks = splitText(content);
+            List<String> chunks = textSplitter.splitText(content);
             for (String chunk : chunks) {
                 doc.add(new TextField("classDescription", chunk, Field.Store.YES));
             }
@@ -72,43 +74,13 @@ public class DocumentIndexer {
 
         String methodDescription = method.description();
         if (methodDescription.length() > maxTermLength) {
-            for (String chunk : splitText(methodDescription)) {
+            for (String chunk : textSplitter.splitText(methodDescription)) {
                 doc.add(new TextField("description", chunk, Field.Store.YES));
             }
         } else {
             doc.add(new TextField("description", methodDescription, Field.Store.YES));
         }
         return doc;
-    }
-
-    private List<String> splitText(String text) {
-        List<String> parts = new ArrayList<>();
-        StringBuilder currentPart = new StringBuilder();
-        for (String word : text.split("\\s+")) {
-            if (!currentPart.isEmpty()) {
-                if (currentPart.length() + 1 + word.length() > maxTermLength) {
-                    parts.add(currentPart.toString());
-                    currentPart = new StringBuilder(word);
-                } else {
-                    currentPart.append(" ").append(word);
-                }
-            } else {
-                if (word.length() > maxTermLength) {
-                    int index = 0;
-                    while (index < word.length()) {
-                        int end = Math.min(index + maxTermLength, word.length());
-                        parts.add(word.substring(index, end));
-                        index += maxTermLength;
-                    }
-                } else {
-                    currentPart.append(word);
-                }
-            }
-        }
-        if (!currentPart.isEmpty()) {
-            parts.add(currentPart.toString());
-        }
-        return parts;
     }
 
     public void commit() throws IOException {
