@@ -33,15 +33,15 @@ public class DocumentSearcher {
 
     private final Analyzer analyzer = new StandardAnalyzer();
     private final IndexSearcher indexSearcher;
-    private final QueryParser queryParser;
 
     public DocumentSearcher(IndexSearcher indexSearcher) {
         this.indexSearcher = indexSearcher;
-        this.queryParser = new MultiFieldQueryParser(new String[]{MAIN_SEARCH_FIELD, SECOND_SEARCH_FIELD}, analyzer);
     }
 
     public List<SearchResult> search(String queryString, int maxResults) throws ParseException, IOException {
         logger.info("Executing search for query: '{}' with max results: {}", queryString, maxResults);
+        QueryParser queryParser = new MultiFieldQueryParser(new String[]{MAIN_SEARCH_FIELD, SECOND_SEARCH_FIELD},
+                analyzer);
         Query query = queryParser.parse(queryString);
         TopDocs topDocs = indexSearcher.search(query, maxResults);
         StoredFields storedFields = indexSearcher.storedFields();
