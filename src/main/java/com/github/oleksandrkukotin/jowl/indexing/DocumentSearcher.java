@@ -79,6 +79,7 @@ public class DocumentSearcher {
                     }
                     return doc;
                 })
+                // TODO: fix that
                 .map(SearchResult::new)
                 .toList();
         logger.info("Search completed. Found {} results.", results.size());
