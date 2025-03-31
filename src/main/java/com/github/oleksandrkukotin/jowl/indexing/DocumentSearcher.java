@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class DocumentSearcher {
@@ -60,6 +61,7 @@ public class DocumentSearcher {
                         return null;
                     }
                 })
+                .filter(Objects::nonNull)
                 .map(doc -> {
                     String text = doc.get(MAIN_SEARCH_FIELD);
                     if (text != null && !text.isBlank()) {
@@ -79,8 +81,13 @@ public class DocumentSearcher {
                     }
                     return doc;
                 })
-                // TODO: fix that
-                .map(SearchResult::new)
+                .map(doc -> {
+                    if (doc.get("methodName") != null) {
+                        return new MethodSearchResult(doc);
+                    } else {
+                        return new ClassSearchResult(doc);
+                    }
+                })
                 .toList();
         logger.info("Search completed. Found {} results.", results.size());
         return results;
