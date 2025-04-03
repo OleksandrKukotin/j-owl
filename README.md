@@ -11,7 +11,7 @@ Tired of Google burying useful docs under SEO spam? **JOwl** is here to fix that
 ✔ **Minimal UI** – Lightweight search interface (JSP/Swagger UI)
 
 ## **🛠 Tech Stack**
-- **Java 17** – Core language
+- **Java 21** – Core language
 - **Spring Boot** – API backend
 - **Lucene** – Full-text search & indexing
 - **jsoup** – Web crawling & HTML parsing
