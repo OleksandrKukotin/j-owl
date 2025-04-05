@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
-// TODO: analyze and fix documents creating process
 @Component
 public class DocumentIndexer {
 
@@ -47,6 +46,7 @@ public class DocumentIndexer {
         }
     }
 
+    // TODO: sync fields naming with DocumentSeracher
     private Document createClassDocument(JavadocCrawledPage page) {
         Document doc = new Document();
         doc.add(new StringField("classUrl", page.url(), Field.Store.YES));
