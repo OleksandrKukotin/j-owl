@@ -29,6 +29,7 @@ public class DocumentSearcher {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
     public static final int SNIPPET_SIZE = 100;
+    // TODO: sync fields naming with DocumentIndexer
     private static final String MAIN_SEARCH_FIELD = "classDescription";
     private static final String SECOND_SEARCH_FIELD = "methodSignature";
 
