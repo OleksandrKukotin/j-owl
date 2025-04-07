@@ -24,14 +24,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.CLASS_DESCRIPTION;
+import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.METHOD_SIGNATURE;
+
 @Component
 public class DocumentSearcher {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentSearcher.class);
     public static final int SNIPPET_SIZE = 100;
-    // TODO: sync fields naming with DocumentIndexer
-    private static final String MAIN_SEARCH_FIELD = "classDescription";
-    private static final String SECOND_SEARCH_FIELD = "methodSignature";
 
     private final Analyzer analyzer = new StandardAnalyzer();
     private final IndexSearcher indexSearcher;
@@ -42,7 +42,7 @@ public class DocumentSearcher {
 
     public List<SearchResult> search(String queryString, int maxResults) throws ParseException, IOException {
         logger.info("Executing search for query: '{}' with max results: {}", queryString, maxResults);
-        QueryParser queryParser = new MultiFieldQueryParser(new String[]{MAIN_SEARCH_FIELD, SECOND_SEARCH_FIELD},
+        QueryParser queryParser = new MultiFieldQueryParser(new String[]{CLASS_DESCRIPTION, METHOD_SIGNATURE},
                 analyzer);
         Query query = queryParser.parse(queryString);
         TopDocs topDocs = indexSearcher.search(query, maxResults);
@@ -64,15 +64,15 @@ public class DocumentSearcher {
                 })
                 .filter(Objects::nonNull)
                 .map(doc -> {
-                    String text = doc.get(MAIN_SEARCH_FIELD);
+                    String text = doc.get(CLASS_DESCRIPTION);
                     if (text != null && !text.isBlank()) {
-                        try (TokenStream stream = analyzer.tokenStream(MAIN_SEARCH_FIELD, new StringReader(text))) {
+                        try (TokenStream stream = analyzer.tokenStream(CLASS_DESCRIPTION, new StringReader(text))) {
                             String highlightedText = highlighter.getBestFragment(stream, text);
                             if (highlightedText != null) {
                                 doc.add(new TextField("snippet", highlightedText, Field.Store.YES));
                             }
-                            doc.removeField(MAIN_SEARCH_FIELD);
-                            doc.add(new TextField(MAIN_SEARCH_FIELD, text, Field.Store.YES));
+                            doc.removeField(CLASS_DESCRIPTION);
+                            doc.add(new TextField(CLASS_DESCRIPTION, text, Field.Store.YES));
                         } catch (IOException e) {
                             throw new IndexSearchException(e.getMessage(), e);
                         } catch (InvalidTokenOffsetsException e) {

@@ -2,21 +2,23 @@ package com.github.oleksandrkukotin.jowl.indexing;
 
 import org.apache.lucene.document.Document;
 
+import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.*;
+
 public class ClassSearchResult implements SearchResult {
 
-    private final String title;
+    private final String name;
     private final String url;
     private final String snippet;
 
     public ClassSearchResult(Document document) {
-        this.title = document.get("title");
-        this.url = document.get("url");
-        this.snippet = document.get("snippet");
+        this.name = document.get(CLASS_NAME);
+        this.url = document.get(CLASS_URL);
+        this.snippet = document.get(SNIPPET);
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     @Override

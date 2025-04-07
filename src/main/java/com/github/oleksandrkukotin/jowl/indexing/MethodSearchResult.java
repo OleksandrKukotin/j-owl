@@ -2,25 +2,25 @@ package com.github.oleksandrkukotin.jowl.indexing;
 
 import org.apache.lucene.document.Document;
 
+import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.*;
+
 public class MethodSearchResult implements SearchResult {
 
-    private final String title;
     private final String url;
     private final String snippet;
     private final String methodName;
     private final String methodSignature;
 
     public MethodSearchResult(Document document) {
-        this.url = document.get("url") + "#" + document.get("methodName");
-        this.methodName = document.get("methodName");
-        this.methodSignature = document.get("methodSignature");
-        this.snippet = document.get("snippet");
-        this.title = document.get("className") + "." + methodName;
+        this.url = document.get(CLASS_URL) + "#" + document.get(METHOD_NAME);
+        this.methodName = document.get(METHOD_NAME);
+        this.methodSignature = document.get(METHOD_SIGNATURE);
+        this.snippet = document.get(SNIPPET);
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return methodName;
     }
 
     @Override
@@ -31,10 +31,6 @@ public class MethodSearchResult implements SearchResult {
     @Override
     public String getSnippet() {
         return snippet;
-    }
-
-    public String getMethodName() {
-        return methodName;
     }
 
     public String getMethodSignature() {
