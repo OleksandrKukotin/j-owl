@@ -24,8 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.CLASS_DESCRIPTION;
-import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.METHOD_SIGNATURE;
+import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.*;
 
 @Component
 public class DocumentSearcher {
@@ -83,7 +82,7 @@ public class DocumentSearcher {
                     return doc;
                 })
                 .map(doc -> {
-                    if (doc.get("methodName") != null) {
+                    if (doc.get(METHOD_NAME) != null) {
                         return new MethodSearchResult(doc);
                     } else {
                         return new ClassSearchResult(doc);
