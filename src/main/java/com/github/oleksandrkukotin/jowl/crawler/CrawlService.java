@@ -26,6 +26,7 @@ public class CrawlService {
     private final JavadocPageParser javadocPageParser;
     private final IndexService indexService;
     private final ExecutorService executorService;
+    // TODO: try to get rid of Semaphore
     private final Semaphore crawlSemaphore;
 
     private final AtomicBoolean isStopped = new AtomicBoolean(true);
@@ -94,6 +95,11 @@ public class CrawlService {
     }
 
     private boolean isCrawlConditionsViolated(String url, int depth) {
+        if (isStopped.get()) {
+            logger.info("Crawling was explicitly stopped. {} pages crawled and indexed, please commit the index",
+                    crawlCounter.get());
+            return true;
+        }
         if (depth <= 0) {
             logger.info("Stopping crawl recursion at URL {} because the depth limit has been reached. {} pages crawled and indexed",
                     url, crawlCounter.get());
@@ -101,10 +107,6 @@ public class CrawlService {
         }
         if (!visitedUrls.add(url)) {
             logger.info("Skipping crawl for URL {} since it has already been visited. {} pages crawled and indexed", url, crawlCounter.get());
-            return true;
-        }
-        if (isStopped.get()) {
-            logger.info("Crawling was explicitly stopped. {} pages crawled and indexed", crawlCounter.get());
             return true;
         }
         return false;
