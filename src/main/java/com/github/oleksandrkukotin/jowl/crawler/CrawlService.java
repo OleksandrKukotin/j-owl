@@ -26,37 +26,23 @@ public class CrawlService {
     private final JavadocPageParser javadocPageParser;
     private final IndexService indexService;
     private final ExecutorService executorService;
-    // TODO: try to get rid of Semaphore
-    private final Semaphore crawlSemaphore;
 
     private final AtomicBoolean isStopped = new AtomicBoolean(true);
     private final AtomicInteger crawlCounter = new AtomicInteger(0);
     private final Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
 
     public CrawlService(JavadocWebCrawler javadocWebCrawler, JavadocPageParser javadocPageParser, IndexService indexService,
-                        @Value("${crawler.concurrent.thread.pool.size}") int threadPoolSize,
-                        @Value("${crawler.concurrent.max.crawls}") int maxConcurrentCrawls) {
+                        @Value("${crawler.concurrent.thread.pool.size}") int threadPoolSize) {
         this.javadocWebCrawler = javadocWebCrawler;
         this.javadocPageParser = javadocPageParser;
         this.indexService = indexService;
         this.executorService = Executors.newFixedThreadPool(threadPoolSize);
-        this.crawlSemaphore = new Semaphore(maxConcurrentCrawls);
     }
 
     public void submitCrawlTask(String url, int depth) {
-        isStopped.set(false);
-        try {
-            crawlSemaphore.acquire();
-            executorService.submit(() -> {
-                try {
-                    crawlRecursively(url, depth);
-                } finally {
-                    crawlSemaphore.release();
-                }
-            });
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            logger.error("Interrupted while acquiring semaphore for initial task", e);
+        if (!executorService.isShutdown() && !executorService.isTerminated()) {
+            isStopped.set(false);
+            executorService.execute(() -> crawlRecursively(url, depth));
         }
     }
 
@@ -70,28 +56,16 @@ public class CrawlService {
             return;
         }
         Optional<JavadocCrawledPage> page = javadocPageParser.parsePage(url, doc.get());
-        page.ifPresentOrElse(javadocCrawledPage -> {
-            indexService.indexDocument(javadocCrawledPage);
-            javadocCrawledPage.links().forEach(link -> {
-                try {
-                    if (!crawlSemaphore.tryAcquire(5, TimeUnit.SECONDS)) {
-                        logger.warn("Skipping crawl task for {} due to semaphore timeout", url);
-                        return;
-                    }
-                    executorService.submit(() -> {
-                        try {
-                            crawlRecursively(link, depth - 1);
-                        } finally {
-                            crawlSemaphore.release();
-                        }
+        page.ifPresentOrElse(
+                javadocCrawledPage -> {
+                    indexService.indexDocument(javadocCrawledPage);
+                    javadocCrawledPage.links().forEach(link -> {
+                        executorService.execute(() -> crawlRecursively(link, depth - 1));
+                        logger.info("Crawling & indexing complete for {} at {}th depth", link, depth - 1);
                     });
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    logger.error("Interrupted while acquiring semaphore for task", e);
-                }
-            });
-            logger.info("Crawling & indexing complete at {}th depth for {}", depth, url);
-        }, () -> logger.info("No page parsed for {}", url));
+                },
+                () -> logger.info("No page parsed for {}", url)
+        );
     }
 
     private boolean isCrawlConditionsViolated(String url, int depth) {
