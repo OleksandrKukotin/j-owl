@@ -1,6 +1,7 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.config;
 
-import org.apache.lucene.document.Document;
+import com.github.oleksandrkukotin.jowl.indexing.search.SearchResult;
+import com.github.oleksandrkukotin.jowl.indexing.core.IndexService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class IndexController {
 
     @GetMapping(value = "/search", produces = APPLICATION_JSON_VALUE)
     public List<SearchResult> search(@RequestParam("query") String query,
-                                 @RequestParam(name = "maxResults", defaultValue = "10") int limit) {
+                                     @RequestParam(name = "maxResults", defaultValue = "10") int limit) {
         return indexService.search(query, limit);
     }
 

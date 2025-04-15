@@ -1,7 +1,9 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.core;
 
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import com.github.oleksandrkukotin.jowl.exception.IndexingException;
+import com.github.oleksandrkukotin.jowl.indexing.search.DocumentSearcher;
+import com.github.oleksandrkukotin.jowl.indexing.search.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

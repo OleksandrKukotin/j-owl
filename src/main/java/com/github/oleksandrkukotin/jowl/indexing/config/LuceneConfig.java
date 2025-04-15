@@ -1,4 +1,4 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.config;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;

@@ -3,7 +3,7 @@ package com.github.oleksandrkukotin.jowl.crawler;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocPageParser;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocWebCrawler;
-import com.github.oleksandrkukotin.jowl.indexing.IndexService;
+import com.github.oleksandrkukotin.jowl.indexing.core.IndexService;
 import jakarta.annotation.PreDestroy;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;

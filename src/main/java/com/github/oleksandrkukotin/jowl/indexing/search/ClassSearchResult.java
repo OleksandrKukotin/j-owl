@@ -1,8 +1,8 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.search;
 
 import org.apache.lucene.document.Document;
 
-import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.*;
+import static com.github.oleksandrkukotin.jowl.indexing.config.LuceneFields.*;
 
 public class ClassSearchResult implements SearchResult {
 

@@ -1,4 +1,4 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.search;
 
 import com.github.oleksandrkukotin.jowl.exception.IndexSearchException;
 import org.apache.lucene.analysis.Analyzer;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.*;
+import static com.github.oleksandrkukotin.jowl.indexing.config.LuceneFields.*;
 
 @Component
 public class DocumentSearcher {

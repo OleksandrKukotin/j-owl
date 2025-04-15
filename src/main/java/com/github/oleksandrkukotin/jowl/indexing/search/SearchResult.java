@@ -1,4 +1,4 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.search;
 
 public interface SearchResult {
 

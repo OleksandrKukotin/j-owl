@@ -1,4 +1,4 @@
-package com.github.oleksandrkukotin.jowl.indexing;
+package com.github.oleksandrkukotin.jowl.indexing.core;
 
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocMethod;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
-import static com.github.oleksandrkukotin.jowl.indexing.LuceneFields.*;
+import static com.github.oleksandrkukotin.jowl.indexing.config.LuceneFields.*;
 
 @Component
 public class DocumentIndexer {
