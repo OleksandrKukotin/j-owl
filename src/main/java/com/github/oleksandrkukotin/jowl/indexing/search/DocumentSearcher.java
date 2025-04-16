@@ -65,18 +65,9 @@ public class DocumentSearcher {
                 .map(doc -> {
                     String text = doc.get(CLASS_DESCRIPTION);
                     if (text != null && !text.isBlank()) {
-                        try (TokenStream stream = analyzer.tokenStream(CLASS_DESCRIPTION, new StringReader(text))) {
-                            String highlightedText = highlighter.getBestFragment(stream, text);
-                            if (highlightedText != null) {
-                                doc.add(new TextField("snippet", highlightedText, Field.Store.YES));
-                            }
-                            doc.removeField(CLASS_DESCRIPTION);
-                            doc.add(new TextField(CLASS_DESCRIPTION, text, Field.Store.YES));
-                        } catch (IOException e) {
-                            throw new IndexSearchException(e.getMessage(), e);
-                        } catch (InvalidTokenOffsetsException e) {
-                            logger.error("Highlighting failed for text {}", text, e);
-                            throw new IndexSearchException(e.getMessage(), e);
+                        String highlightedText = createHighlightedSnippet(CLASS_DESCRIPTION, text, highlighter);
+                        if (highlightedText != null) {
+                            doc.add(new TextField(SNIPPET, highlightedText, Field.Store.YES));
                         }
                     }
                     return doc;
@@ -91,5 +82,17 @@ public class DocumentSearcher {
                 .toList();
         logger.info("Search completed. Found {} results.", results.size());
         return results;
+    }
+
+    private String createHighlightedSnippet(String fieldName, String text, Highlighter highlighter) {
+        try (TokenStream stream = analyzer.tokenStream(fieldName, new StringReader(text))) {
+            return highlighter.getBestFragment(stream, text);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            return "";
+        } catch (InvalidTokenOffsetsException e) {
+            logger.error("Highlighting failed for text {}", text, e);
+            return "";
+        }
     }
 }
