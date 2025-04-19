@@ -1,6 +1,5 @@
 package com.github.oleksandrkukotin.jowl.indexing.search;
 
-import com.github.oleksandrkukotin.jowl.exception.IndexSearchException;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -72,13 +71,7 @@ public class DocumentSearcher {
                     }
                     return doc;
                 })
-                .map(doc -> {
-                    if (doc.get(METHOD_NAME) != null) {
-                        return new MethodSearchResult(doc);
-                    } else {
-                        return new ClassSearchResult(doc);
-                    }
-                })
+                .map(SearchResultFactory::fromDocument)
                 .toList();
         logger.info("Search completed. Found {} results.", results.size());
         return results;

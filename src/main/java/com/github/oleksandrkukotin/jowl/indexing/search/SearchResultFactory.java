@@ -2,14 +2,16 @@ package com.github.oleksandrkukotin.jowl.indexing.search;
 
 import org.apache.lucene.document.Document;
 
-// TODO: to implement
+import static com.github.oleksandrkukotin.jowl.indexing.config.LuceneFields.*;
+
 public class SearchResultFactory {
 
-    public SearchResult createMethodSearchResult() {
-        return new MethodSearchResult(new Document());
-    }
-
-    public SearchResult createClassSearchResult() {
-        return new ClassSearchResult(new Document());
+    public static SearchResult fromDocument(Document doc) {
+        if (doc == null) return null;
+        if (doc.get(METHOD_NAME) != null) {
+            return new MethodSearchResult(doc);
+        } else {
+            return new ClassSearchResult(doc);
+        }
     }
 }
