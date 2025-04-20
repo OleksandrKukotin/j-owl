@@ -5,6 +5,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,18 +22,29 @@ public class JavadocPageParser implements PageParser {
         Optional<String> optionalTitle = Optional.of(document.select("h1").text());
         String className = optionalTitle.orElse("");
         String classDescription = document.select("div.block").text(); // Class description
-        Set<String> urls = extractLinks(document);
+        Set<String> urls = extractLinks(document, url);
         Set<JavadocMethod> methods = extractMethods(document);
 
         return Optional.of(new JavadocCrawledPage(url, className, classDescription, urls, methods));
     }
 
-    private Set<String> extractLinks(Document document) {
+    private Set<String> extractLinks(Document document, String baseUrl) {
         return document.select("a[href]").stream()
                 .map(link -> link.absUrl("href"))
                 .filter(link -> !link.isEmpty())
                 .filter(link -> !link.contains("#"))
+                .filter(link -> isTheSameDomain(baseUrl, link))
                 .collect(Collectors.toSet());
+    }
+
+    private boolean isTheSameDomain(String baseUrl, String targetUrl) {
+        try {
+            URL url = new URL(baseUrl);
+            URL target = new URL(targetUrl);
+            return url.getHost().equalsIgnoreCase(target.getHost());
+        } catch (MalformedURLException e) {
+            return false;
+        }
     }
 
     private Set<JavadocMethod> extractMethods(Document document) {
