@@ -6,6 +6,8 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
@@ -39,10 +41,12 @@ public class JavadocPageParser implements PageParser {
 
     private boolean isTheSameDomain(String baseUrl, String targetUrl) {
         try {
-            URL url = new URL(baseUrl);
-            URL target = new URL(targetUrl);
+            URI baseUri = new URI(baseUrl);
+            URL url = baseUri.toURL();
+            URI targetUri = new URI(targetUrl);
+            URL target = targetUri.toURL();
             return url.getHost().equalsIgnoreCase(target.getHost());
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | URISyntaxException e) {
             return false;
         }
     }
