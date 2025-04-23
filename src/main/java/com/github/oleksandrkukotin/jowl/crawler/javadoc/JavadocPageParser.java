@@ -3,6 +3,8 @@ package com.github.oleksandrkukotin.jowl.crawler.javadoc;
 import com.github.oleksandrkukotin.jowl.crawler.PageParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class JavadocPageParser implements PageParser {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavadocPageParser.class);
 
     // TO TEST
     @Override
@@ -47,6 +51,7 @@ public class JavadocPageParser implements PageParser {
             URL target = targetUri.toURL();
             return url.getHost().equalsIgnoreCase(target.getHost());
         } catch (MalformedURLException | URISyntaxException e) {
+            LOGGER.debug("Error parsing URLs: baseUrl={}, targetUrl={}", baseUrl, targetUrl, e);
             return false;
         }
     }
