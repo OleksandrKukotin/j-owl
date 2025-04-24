@@ -3,6 +3,7 @@ package com.github.oleksandrkukotin.jowl.crawler.javadoc;
 import com.github.oleksandrkukotin.jowl.crawler.PageParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -57,7 +58,16 @@ public class JavadocPageParser implements PageParser {
     }
 
     private Set<JavadocMethod> extractMethods(Document document) {
-        return document.select("section#method-detail li.detail").stream()
+        final String PRIMARY_SELECTOR = "section#method-detail";
+        final String SECONDARY_SELECTOR = "li.detail";
+
+        Elements methodElements = document.select(PRIMARY_SELECTOR);
+        if (methodElements.isEmpty()) {
+            LOGGER.warn("No primary methods found");
+            methodElements = document.select(SECONDARY_SELECTOR);
+        }
+
+        return methodElements.stream()
                 .map(JavadocPageParser::parseMethod)
                 .collect(Collectors.toSet());
     }
