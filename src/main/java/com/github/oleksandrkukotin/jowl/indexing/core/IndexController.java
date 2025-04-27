@@ -1,7 +1,6 @@
-package com.github.oleksandrkukotin.jowl.indexing.config;
+package com.github.oleksandrkukotin.jowl.indexing.core;
 
 import com.github.oleksandrkukotin.jowl.indexing.search.SearchResult;
-import com.github.oleksandrkukotin.jowl.indexing.core.IndexService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
