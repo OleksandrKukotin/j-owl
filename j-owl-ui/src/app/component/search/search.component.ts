@@ -15,4 +15,22 @@ export class SearchComponent {
 
   constructor(private searchService: SearchService) {
   }
+
+  onSearch(): void {
+    this.loading = true;
+    this.error = null;
+    this.results = [];
+
+    this.searchService.search(this.query, 50).subscribe({
+      next: (data) => {
+        this.results = data;
+        this.loading = false;
+      },
+      error: err => {
+        this.error = "Error fetching search results.";
+        console.error(err);
+        this.loading = false
+      }
+    })
+  }
 }
