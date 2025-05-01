@@ -1,1 +1,19 @@
-<p>search works!</p>
+<div class="search-container">
+  <h1>🔍 J-Owl Search</h1>
+
+  <form (submit)="onSearch(); $event.preventDefault();">
+    <input type="text" [(ngModel)]="query" name="query" placeholder="Enter a search query..." required>
+    <button type="submit">Search</button>
+  </form>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error">{{error}}</div>
+
+  <div *ngIf="results.length > 0">
+    <h2>Results:</h2>
+    <div *ngFor="let result of results" class="result">
+      <a [href]="result.url" target="_blank"><h3>{{ result.name }}</h3></a>
+      <p [innerHTML]="result.snippet"></p>
+    </div>
+  </div>
+</div>

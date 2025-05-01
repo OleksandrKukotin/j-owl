@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
 import { SearchService, SearchResult} from '../../services/search.service';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
+  imports: [
+    FormsModule
+  ],
   styleUrl: './search.component.css'
 })
 export class SearchComponent {
