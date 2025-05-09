@@ -8,7 +8,7 @@ Tired of Google burying useful docs under SEO spam? **JOwl** is here to fix that
 ✔ **Web Crawler** – Automatically fetches API docs & dev resources  
 ✔ **Lucene-Powered Search** – Fast, relevance-based querying  
 ✔ **REST API** – Simple interface to search and retrieve results  
-✔ **Minimal UI** – Lightweight search interface (JSP/Swagger UI)
+✔ **Angular UI** – User-friendly search interface powered by Angular framework
 
 ## **🛠 Tech Stack**
 - **Java 21** – Core language
@@ -18,6 +18,7 @@ Tired of Google burying useful docs under SEO spam? **JOwl** is here to fix that
 - **Gradle** – Build automation
 - **Docker** – Containerization
 - **GitLab CI/CD or Jenkins** – Deployment automation
+- **Angular framework** - Frontend
 
 ## **🛤 Roadmap**
 ### **Phase 1: Core MVP (Foundation)**
