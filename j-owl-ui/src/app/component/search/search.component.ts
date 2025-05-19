@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { SearchService, SearchResult} from '../../services/search.service';
 import {FormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   imports: [
-    FormsModule
+    FormsModule,
+    CommonModule
   ],
   styleUrl: './search.component.css'
 })
