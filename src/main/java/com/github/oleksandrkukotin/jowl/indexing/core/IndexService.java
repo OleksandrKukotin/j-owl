@@ -45,6 +45,7 @@ public class IndexService {
     public void commitIndex() {
         try {
             indexer.commit();
+            logger.info("Index committed");
         } catch (IOException e) {
             throw new IndexingException(e.getMessage(), e);
         }
@@ -53,6 +54,7 @@ public class IndexService {
     public void resetIndex() {
         try {
             indexer.clearIndex();
+            logger.info("Index reset");
         } catch (IOException e) {
             throw new IndexingException(e.getMessage(), e);
         }
