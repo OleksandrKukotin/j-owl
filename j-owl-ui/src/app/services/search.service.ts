@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
-import { HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
+
+import {environment} from '../../environments/environment.development';
 
 export interface SearchResult {
   name: string;
@@ -13,11 +15,15 @@ export interface SearchResult {
 })
 export class SearchService {
 
-  private readonly API_URL = "http://localhost:8080/index/search"
+  private readonly API_URL = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   search(query: string, maxResults: number = 10): Observable<SearchResult[]> {
-    return this.http.get<SearchResult[]>(`${this.API_URL}?query=${query}&maxResults=${maxResults}`);
+    const params = new HttpParams()
+      .set('query', query)
+      .set('maxResults', maxResults.toString());
+    return this.http.get<SearchResult[]>(this.API_URL, {params});
   }
 }

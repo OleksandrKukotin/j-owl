@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { SearchService, SearchResult} from '../../services/search.service';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -10,7 +11,7 @@ import {CommonModule} from '@angular/common';
     FormsModule,
     CommonModule
   ],
-  styleUrl: './search.component.css'
+  styleUrls: ['./search.component.css']
 })
 export class SearchComponent {
 
@@ -27,15 +28,19 @@ export class SearchComponent {
     this.error = null;
     this.results = [];
 
-    this.searchService.search(this.query, 50).subscribe({
+    this.searchService.search(this.query, 50)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe({
       next: (data) => {
         this.results = data;
-        this.loading = false;
       },
       error: err => {
         this.error = "Error fetching search results.";
         console.error(err);
-        this.loading = false
       }
     })
   }
