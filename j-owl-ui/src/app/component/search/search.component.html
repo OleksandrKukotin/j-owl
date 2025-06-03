@@ -1,19 +1,30 @@
-<div class="search-container">
-  <h1>🔍 J-Owl Search</h1>
+<div class="container mt-5">
+  <h1 class="mb-4 text-center">🔍 J-Owl Search</h1>
 
-  <form (submit)="onSearch(); $event.preventDefault();">
-    <input type="text" [(ngModel)]="query" name="query" placeholder="Enter a search query..." required>
-    <button type="submit">Search</button>
+  <form class="d-flex gap-2 mb-3" (submit)="onSearch(); $event.preventDefault();">
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="query"
+      name="query"
+      placeholder="Enter a search query..."
+      required
+    >
+    <button type="submit" class="btn btn-primary">Search</button>
   </form>
 
-  <div *ngIf="loading">Loading...</div>
-  <div *ngIf="error">{{error}}</div>
+  <div *ngIf="loading" class="alert alert-info">Loading...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 
   <div *ngIf="results.length > 0">
-    <h2>Results:</h2>
-    <div *ngFor="let result of results" class="result">
-      <a [href]="result.url" target="_blank"><h3>{{ result.name }}</h3></a>
-      <p [innerHTML]="result.snippet"></p>
+    <h2 class="mt-5 border-bottom pb-2">Results:</h2>
+    <div *ngFor="let result of results" class="card mb-3">
+      <div class="card-body">
+        <a [href]="result.url" target="_blank" class="text-decoration-none">
+          <h5 class="card-title">{{ result.name }}</h5>
+        </a>
+        <p class="card-text" [innerHTML]="result.snippet"></p>
+      </div>
     </div>
   </div>
 </div>

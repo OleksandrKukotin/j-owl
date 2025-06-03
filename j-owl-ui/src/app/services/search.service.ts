@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {catchError, Observable, throwError} from 'rxjs';
 
 import {environment} from '../../environments/environment.development';
 
@@ -24,6 +24,12 @@ export class SearchService {
     const params = new HttpParams()
       .set('query', query)
       .set('maxResults', maxResults.toString());
-    return this.http.get<SearchResult[]>(this.API_URL, {params});
+    return this.http.get<SearchResult[]>(this.API_URL, {params})
+      .pipe(
+        catchError(error => {
+          console.error('Error occurred during search operation', error);
+          throw new Error(error);
+        })
+  );
   }
 }
