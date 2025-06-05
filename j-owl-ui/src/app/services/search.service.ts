@@ -15,7 +15,7 @@ export interface SearchResult {
 })
 export class SearchService {
 
-  private readonly API_URL = environment.apiUrl;
+  private readonly SEARCH_API_URL = environment.searchApiUrl;
 
   constructor(private http: HttpClient) {
   }
@@ -24,7 +24,7 @@ export class SearchService {
     const params = new HttpParams()
       .set('query', query)
       .set('maxResults', maxResults.toString());
-    return this.http.get<SearchResult[]>(this.API_URL, {params})
+    return this.http.get<SearchResult[]>(this.SEARCH_API_URL, {params})
       .pipe(
         catchError(error => {
           console.error('Error occurred during search operation', error);
