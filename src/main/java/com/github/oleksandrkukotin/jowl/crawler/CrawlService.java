@@ -30,13 +30,16 @@ public class CrawlService {
     private final AtomicBoolean isStopped = new AtomicBoolean(true);
     private final AtomicInteger crawlCounter = new AtomicInteger(0);
     private final Set<String> visitedUrls = ConcurrentHashMap.newKeySet();
+    private final int maxRetries;
 
     public CrawlService(JavadocWebCrawler javadocWebCrawler, JavadocPageParser javadocPageParser, IndexService indexService,
-                        @Value("${crawler.concurrent.thread.pool.size}") int threadPoolSize) {
+                        @Value("${crawler.concurrent.thread.pool.size}") int threadPoolSize,
+                        @Value("${crawler.retries.max}") int maxRetries) {
         this.javadocWebCrawler = javadocWebCrawler;
         this.javadocPageParser = javadocPageParser;
         this.indexService = indexService;
         this.executorService = Executors.newFixedThreadPool(threadPoolSize);
+        this.maxRetries = maxRetries;
     }
 
     public void submitCrawlTask(String url, int depth) {
@@ -50,7 +53,7 @@ public class CrawlService {
         if (isCrawlConditionsViolated(url, depth)) return;
 
         crawlCounter.incrementAndGet();
-        Optional<Document> doc = javadocWebCrawler.fetchPage(url);
+        Optional<Document> doc = javadocWebCrawler.fetchPageWithRetries(url, maxRetries);
         if (doc.isEmpty()) {
             logger.info("No page fetched for {}", url);
             return;

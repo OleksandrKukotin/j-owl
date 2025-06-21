@@ -20,6 +20,24 @@ public class JavadocWebCrawler implements WebCrawler {
     private static final int TIMEOUT = 10 * 1000; //10 sec
 
     @Override
+    public Optional<Document> fetchPageWithRetries(String url, int maxRetries) {
+        int retries = 0;
+        while (retries < maxRetries) {
+            try {
+                return fetchPage(url);
+            } catch (Exception e) {
+                retries++;
+                if (retries == maxRetries) {
+                    logger.error("Error fetching page: {}", url, e);
+                    return Optional.empty();
+                }
+                logger.error("Error fetching page: {}", url, e);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Document> fetchPage(String url) {
         try {
             Document page = Jsoup.connect(url)
