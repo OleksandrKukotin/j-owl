@@ -26,13 +26,12 @@ public class JavadocPageParser implements PageParser {
     public Optional<JavadocCrawledPage> parsePage(String url, Document document) {
         if (document == null) return Optional.empty();
 
-        Optional<String> optionalTitle = Optional.of(document.select("h1").text());
-        String className = optionalTitle.orElse("");
+        Optional<String> optionalClassName = Optional.of(document.select("h1").text());
         String classDescription = document.select("div.block").text(); // Class description
         Set<String> urls = extractLinks(document, url);
         Set<JavadocMethod> methods = extractMethods(document);
 
-        return Optional.of(new JavadocCrawledPage(url, className, classDescription, urls, methods));
+        return Optional.of(new JavadocCrawledPage(url, optionalClassName.get(), classDescription, urls, methods));
     }
 
     private Set<String> extractLinks(Document document, String baseUrl) {
@@ -46,6 +45,8 @@ public class JavadocPageParser implements PageParser {
 
     private boolean isTheSameDomain(String baseUrl, String targetUrl) {
         try {
+            baseUrl = baseUrl.trim();
+            targetUrl = targetUrl.trim();
             URI baseUri = new URI(baseUrl);
             URL url = baseUri.toURL();
             URI targetUri = new URI(targetUrl);
