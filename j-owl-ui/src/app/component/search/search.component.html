@@ -1,5 +1,6 @@
 <div class="container mt-5">
   <h1 class="mb-4 text-center">🔍 J-Owl Search</h1>
+  <p class="text-center text-muted mb-4">Search Java documentation and API references</p>
 
   <form class="d-flex gap-2 mb-3" (submit)="onSearch(); $event.preventDefault();">
     <input
@@ -7,23 +8,101 @@
       class="form-control"
       [(ngModel)]="query"
       name="query"
-      placeholder="Enter a search query..."
+      placeholder="Enter a search query (e.g., 'String', 'ArrayList', 'HashMap')..."
       required
+      [disabled]="loading"
     >
-    <button type="submit" class="btn btn-primary">Search</button>
+    <button type="submit" class="btn btn-primary" [disabled]="loading || !query.trim()">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+      {{ loading ? 'Searching...' : 'Search' }}
+    </button>
   </form>
 
-  <div *ngIf="loading" class="alert alert-info">Loading...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Searching through documentation...</p>
+  </div>
 
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ error }}
+    <button type="button" class="btn-close" (click)="clearError()"></button>
+  </div>
+
+  <!-- No Results -->
+  <div *ngIf="!loading && !error && results.length === 0 && hasSearched" class="text-center py-5">
+    <div class="text-muted">
+      <i class="bi bi-search" style="font-size: 3rem;"></i>
+      <h4 class="mt-3">No results found</h4>
+      <p>Try different keywords or check your spelling.</p>
+    </div>
+  </div>
+
+  <!-- Results -->
   <div *ngIf="results.length > 0">
-    <h2 class="mt-5 border-bottom pb-2">Results:</h2>
-    <div *ngFor="let result of results" class="card mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">Results ({{ results.length }})</h2>
+      <button class="btn btn-outline-secondary btn-sm" (click)="copyAllResults()">
+        <i class="bi bi-clipboard"></i> Copy All
+      </button>
+    </div>
+    
+    <div *ngFor="let result of results; let i = index" class="card mb-3">
       <div class="card-body">
-        <a [href]="result.url" target="_blank" class="text-decoration-none">
-          <h5 class="card-title">{{ result.name }}</h5>
-        </a>
-        <p class="card-text" [innerHTML]="result.snippet"></p>
+        <div class="d-flex justify-content-between align-items-start">
+          <div class="flex-grow-1">
+            <a [href]="result.url" target="_blank" class="text-decoration-none">
+              <h5 class="card-title text-primary">{{ result.name }}</h5>
+            </a>
+            <p class="card-text" [innerHTML]="result.snippet"></p>
+          </div>
+          <div class="ms-3">
+            <button 
+              class="btn btn-outline-secondary btn-sm" 
+              (click)="copyToClipboard(result.name)"
+              title="Copy to clipboard"
+            >
+              <i class="bi bi-clipboard"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Tips -->
+  <div *ngIf="!hasSearched" class="text-center py-5">
+    <div class="text-muted">
+      <h4>Welcome to J-Owl!</h4>
+      <p>Search for Java classes, methods, and documentation.</p>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card border-0 bg-light">
+            <div class="card-body">
+              <h6>Class Search</h6>
+              <p class="small">Try: "String", "ArrayList", "HashMap"</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 bg-light">
+            <div class="card-body">
+              <h6>Method Search</h6>
+              <p class="small">Try: "toString", "add", "get"</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 bg-light">
+            <div class="card-body">
+              <h6>Package Search</h6>
+              <p class="small">Try: "java.util", "java.io"</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

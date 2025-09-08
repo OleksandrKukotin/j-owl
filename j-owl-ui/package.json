@@ -22,6 +22,7 @@
     "@angular/ssr": "^19.2.9",
     "angular": "^1.6.10",
     "bootstrap": "^5.3.7",
+    "bootstrap-icons": "^1.13.1",
     "express": "^4.18.2",
     "ng": "^0.0.0",
     "rxjs": "~7.8.0",
