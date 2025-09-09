@@ -8,6 +8,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import static com.github.oleksandrkukotin.jowl.indexing.config.LuceneFields.*;
 
 @Component
 public class DocumentIndexer {
+
+    private static final Logger logger = LoggerFactory.getLogger(DocumentIndexer.class);
 
     private final IndexWriter indexWriter;
     private final TextSplitter textSplitter;
@@ -39,13 +43,28 @@ public class DocumentIndexer {
     }
 
     public void index(JavadocCrawledPage page) throws IOException {
+        logger.debug("Creating index documents for class: {} with {} methods", 
+                    page.className(), page.methods().size());
+        
+        // Index the class document
         Document doc = createClassDocument(page);
         indexWriter.addDocument(doc);
+        logger.debug("Added class document for: {}", page.className());
 
+        // Index method documents
+        int methodCount = 0;
         for (JavadocMethod method : page.methods()) {
             Document methodDoc = createMethodDocument(page.url(), method);
             indexWriter.addDocument(methodDoc);
+            methodCount++;
+            
+            if (methodCount % 10 == 0) {
+                logger.debug("Indexed {} methods for class: {}", methodCount, page.className());
+            }
         }
+        
+        logger.debug("Completed indexing for class: {} - {} methods indexed", 
+                    page.className(), methodCount);
     }
 
     private Document createClassDocument(JavadocCrawledPage page) {
@@ -85,10 +104,14 @@ public class DocumentIndexer {
     }
 
     public void commit() throws IOException {
+        logger.debug("Committing index changes to disk");
         indexWriter.commit();
+        logger.debug("Index commit completed");
     }
 
     public void clearIndex() throws IOException {
+        logger.debug("Clearing all documents from index");
         indexWriter.deleteAll();
+        logger.debug("Index cleared successfully");
     }
 }

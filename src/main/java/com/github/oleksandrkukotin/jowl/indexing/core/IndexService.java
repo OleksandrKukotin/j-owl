@@ -27,36 +27,64 @@ public class IndexService {
 
     public void indexDocument(JavadocCrawledPage page) {
         try {
+            logger.info("Starting to index document: {} with {} methods", 
+                       page.className(), page.methods().size());
+            long startTime = System.currentTimeMillis();
+            
             indexer.index(page);
+            
+            long duration = System.currentTimeMillis() - startTime;
+            logger.info("Successfully indexed document: {} in {}ms", page.className(), duration);
         } catch (IOException e) {
-            throw new IndexingException(e.getMessage(), e);
+            logger.error("Failed to index document: {} - {}", page.className(), e.getMessage(), e);
+            throw new IndexingException("Failed to index document: " + page.className(), e);
         }
     }
 
     public List<SearchResult> search(String query, int maxResults) {
         try {
-            return searcher.search(query, maxResults);
+            logger.info("Executing search query: '{}' with max results: {}", query, maxResults);
+            long startTime = System.currentTimeMillis();
+            
+            List<SearchResult> results = searcher.search(query, maxResults);
+            
+            long duration = System.currentTimeMillis() - startTime;
+            logger.info("Search completed in {}ms. Found {} results for query: '{}'", 
+                       duration, results.size(), query);
+            return results;
         } catch (Exception e) {
-            logger.error("Error during search with query {}", query, e);
+            logger.error("Error during search with query '{}': {}", query, e.getMessage(), e);
             return new ArrayList<>();
         }
     }
 
     public void commitIndex() {
         try {
+            logger.info("Starting index commit operation");
+            long startTime = System.currentTimeMillis();
+            
             indexer.commit();
-            logger.info("Index committed");
+            
+            long duration = System.currentTimeMillis() - startTime;
+            logger.info("Index commit completed successfully in {}ms", duration);
         } catch (IOException e) {
-            throw new IndexingException(e.getMessage(), e);
+            logger.error("Failed to commit index: {}", e.getMessage(), e);
+            throw new IndexingException("Failed to commit index", e);
         }
     }
 
     public void resetIndex() {
         try {
+            logger.info("Starting index reset operation");
+            long startTime = System.currentTimeMillis();
+            
             indexer.clearIndex();
-            logger.info("Index reset");
+            
+            long duration = System.currentTimeMillis() - startTime;
+            logger.info("Index reset completed successfully in {}ms", duration);
         } catch (IOException e) {
-            throw new IndexingException(e.getMessage(), e);
+            logger.error("Failed to reset index: {}", e.getMessage(), e);
+            throw new IndexingException("Failed to reset index", e);
         }
     }
 }
