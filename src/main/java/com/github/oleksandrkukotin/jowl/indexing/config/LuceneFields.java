@@ -14,4 +14,7 @@ public class LuceneFields {
     public static final String METHOD_RETURN_TYPE = "returnType";
     public static final String METHOD_SIGNATURE = "methodSignature";
     public static final String METHOD_DESCRIPTION = "methodDescription";
+    
+    public static final String PACKAGE_NAME = "packageName";
+    public static final String SHORT_DESCRIPTION = "shortDescription";
 }

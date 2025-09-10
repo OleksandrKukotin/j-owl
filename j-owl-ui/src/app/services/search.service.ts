@@ -1,13 +1,23 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {catchError, Observable, throwError} from 'rxjs';
+import {catchError, map, Observable} from 'rxjs';
 
-import {environment} from '../../environments/environment.development';
+import {environment} from '../../environments/environment';
 
 export interface SearchResult {
   name: string;
   url: string;
   snippet: string;
+}
+
+export interface SearchResponse {
+  query: string;
+  results: SearchResult[];
+  totalResults: number;
+  maxResults: number;
+  timestamp: string;
+  durationMs: number;
+  metadata?: any;
 }
 
 @Injectable({
@@ -24,12 +34,16 @@ export class SearchService {
     const params = new HttpParams()
       .set('query', query)
       .set('maxResults', maxResults.toString());
-    return this.http.get<SearchResult[]>(this.SEARCH_API_URL, {params})
+    return this.http.get<SearchResponse>(this.SEARCH_API_URL, {params})
       .pipe(
         catchError(error => {
           console.error('Error occurred during search operation', error);
           throw new Error(error);
         })
-  );
+      )
+      .pipe(
+        // Extract results from SearchResponse
+        map(response => response.results)
+      );
   }
 }
