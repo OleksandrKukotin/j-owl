@@ -1,42 +1,62 @@
-# **JOwl - Developer Docs & API Search Engine** 🦉
+# JOwl - Developer Docs & API Search Engine 🦉
 
-JOwl is a **focused web search engine** designed to index and retrieve **developer documentation and API references** better than traditional search engines.
+**Tired of digging through SEO spam just to find the official docs?**  
+JOwl is a lightweight, Lucene-powered search engine built to index and retrieve developer documentation faster and cleaner than traditional search engines.
 
-Tired of Google burying useful docs under SEO spam? **JOwl** is here to fix that.
+It’s a personal project — but polished enough to showcase full-stack skills: backend, frontend, crawling, indexing, and deployment. 🚀
 
-## **🚀 Features (MVP Goals)**
-✔ **Web Crawler** – Automatically fetches API docs & dev resources  
+---
+
+## ✨ Features (MVP)
+✔ **Web Crawler** – Automatically fetches developer docs & API references  
 ✔ **Lucene-Powered Search** – Fast, relevance-based querying  
-✔ **REST API** – Simple interface to search and retrieve results  
-✔ **Angular UI** – User-friendly search interface powered by Angular framework
+✔ **REST API** – Simple JSON interface for search results  
+✔ **Angular UI** – Clean and functional web interface  
+✔ **Dockerized** – Easy to run in one command
 
-## **🛠 Tech Stack**
+---
+
+## 🛠 Tech Stack
 - **Java 21** – Core language
-- **Spring Boot** – API backend
+- **Spring Boot** – REST backend
 - **Lucene** – Full-text search & indexing
-- **jsoup** – Web crawling & HTML parsing
+- **jsoup** – HTML parsing & crawling
 - **Gradle** – Build automation
 - **Docker** – Containerization
-- **GitLab CI/CD or Jenkins** – Deployment automation
-- **Angular framework** - Frontend
+- **Angular** – Frontend
 
-## **🛤 Roadmap**
-### **Phase 1: Core MVP (Foundation)**
-✅ **Crawl & index developer docs** (title + content)  
-✅ **Expose a REST API for search queries**  
-✅ **Basic search ranking & filtering**
+---
 
-### **Phase 2: Enhancements**
-🔹 **Autocomplete & fuzzy search**  
-🔹 **Code snippet extraction**  
-🔹 **Advanced ranking (AI-powered relevance scoring)**  
-🔹 **Dark-mode UI (because developers love it)**
+## 🎯 Roadmap
+### ✅ Phase 1: Core MVP (Done!)
+- [x] Crawl & index developer docs (title + content)
+- [x] Expose REST API for search queries
+- [x] Basic Angular UI with results display
+- [ ] Docker setup for easy deployment
 
-### **Phase 3: Expansion**
-🚀 **Index GitHub Wiki & README files**  
-🚀 **Monitor & auto-update indexed data**  
-🚀 **Support for additional data formats (Swagger, OpenAPI, Postman)**
+### 🔜 Phase 2: Nice-to-Haves (Future Work)
+- 🔹 Autocomplete & fuzzy search
+- 🔹 Code snippet extraction
+- 🔹 Smarter ranking (ML/AI relevance scoring)
+- 🔹 Dark-mode UI 🌙
 
-## **🔧 Setup & Usage**
-*(To be added after MVP implementation)*
+### 🚀 Phase 3: Expansion Ideas
+- Index GitHub Wiki & README files
+- Automatic monitoring & updating of indexed sources
+- Support for Swagger / OpenAPI / Postman collections
 
+---
+
+## 🔧 Setup & Usage
+```bash
+# Clone the repo
+git clone git@github.com:OleksandrKukotin/j-owl.git
+cd j-owl
+
+# Build & run with Docker
+docker-compose up --build
+
+# App will be available at:
+# Backend: http://localhost:8080
+# Frontend: http://localhost:4200
+```
