@@ -55,16 +55,44 @@ export class SearchComponent {
     this.error = null;
   }
 
-  copyToClipboard(text: string): void {
+  copyToClipboard(result: SearchResult): void {
+    let textToCopy: string;
+    
+    // For method results, include more context
+    if (result.methodSignature || result.className) {
+      const parts: string[] = [];
+      
+      if (result.packageName) {
+        parts.push(`Package: ${result.packageName}`);
+      }
+      if (result.className) {
+        parts.push(`Class: ${result.className}`);
+      }
+      if (result.methodSignature) {
+        parts.push(`Method: ${result.methodSignature}`);
+      }
+      if (result.returnType) {
+        parts.push(`Returns: ${result.returnType}`);
+      }
+      if (result.modifiers) {
+        parts.push(`Modifiers: ${result.modifiers}`);
+      }
+      
+      textToCopy = parts.join('\n');
+    } else {
+      // For class results, just use the name
+      textToCopy = result.name;
+    }
+    
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(() => {
+      navigator.clipboard.writeText(textToCopy).then(() => {
         this.showCopyFeedback();
       }).catch(err => {
         console.error('Failed to copy: ', err);
-        this.fallbackCopyToClipboard(text);
+        this.fallbackCopyToClipboard(textToCopy);
       });
     } else {
-      this.fallbackCopyToClipboard(text);
+      this.fallbackCopyToClipboard(textToCopy);
     }
   }
 
@@ -106,7 +134,37 @@ export class SearchComponent {
   }
 
   copyAllResults(): void {
-    const allNames = this.results.map(result => result.name).join('\n');
-    this.copyToClipboard(allNames);
+    const allResults = this.results.map(result => {
+      if (result.methodSignature || result.className) {
+        const parts: string[] = [];
+        
+        if (result.packageName) {
+          parts.push(`Package: ${result.packageName}`);
+        }
+        if (result.className) {
+          parts.push(`Class: ${result.className}`);
+        }
+        if (result.methodSignature) {
+          parts.push(`Method: ${result.methodSignature}`);
+        }
+        if (result.returnType) {
+          parts.push(`Returns: ${result.returnType}`);
+        }
+        
+        return parts.join(' | ');
+      } else {
+        return result.name;
+      }
+    }).join('\n');
+    
+    this.fallbackCopyToClipboard(allResults);
+  }
+
+  isMethodResult(result: SearchResult): boolean {
+    return !!(result.methodSignature || result.returnType || result.modifiers);
+  }
+
+  getResultTypeLabel(result: SearchResult): string {
+    return this.isMethodResult(result) ? 'Method' : 'Class';
   }
 }

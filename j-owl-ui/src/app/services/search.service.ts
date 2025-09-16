@@ -8,6 +8,13 @@ export interface SearchResult {
   name: string;
   url: string;
   snippet: string;
+  // Method-specific fields (only present for method results)
+  methodSignature?: string;
+  returnType?: string;
+  modifiers?: string;
+  className?: string;
+  packageName?: string;
+  shortDescription?: string;
 }
 
 export interface SearchResponse {
