@@ -22,7 +22,6 @@ val jSoupVer = "1.18.3"
 
 val springBootStarterVer = "3.4.2"
 val apacheLuceneVer = "10.1.0"
-val apacheLuceneAnalyzersVer = "8.11.4"
 dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$logForJavaVer")
     implementation("org.apache.logging.log4j:log4j-api:$logForJavaVer")
@@ -31,7 +30,7 @@ dependencies {
     implementation("org.apache.lucene:lucene-queryparser:$apacheLuceneVer")
     implementation("org.apache.lucene:lucene-highlighter:$apacheLuceneVer")
     implementation("org.apache.lucene:lucene-memory:$apacheLuceneVer")
-    implementation("org.apache.lucene:lucene-analyzers-common:$apacheLuceneAnalyzersVer")
+    implementation("org.apache.lucene:lucene-analysis-common:$apacheLuceneVer")
 
     implementation("org.jsoup:jsoup:$jSoupVer")
 

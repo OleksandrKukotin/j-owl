@@ -32,8 +32,8 @@ public class LuceneConfig {
     }
 
     @Bean
-    public IndexSearcher indexSearcher(FSDirectory directory) throws IOException {
-        return new IndexSearcher(DirectoryReader.open(directory));
+    public IndexSearcher indexSearcher(IndexWriter indexWriter) throws IOException {
+        return new IndexSearcher(DirectoryReader.open(indexWriter));
     }
 
     @Bean

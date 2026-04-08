@@ -8,9 +8,18 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - JAVA_OPTS=
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - CORS_ALLOWED_ORIGINS=http://localhost:4200
+    volumes:
+      - lucene_index:/app/lucene_index
     networks:
       - jowl-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/index/stats || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   frontend:
     build:
@@ -20,10 +29,14 @@ services:
     ports:
       - "4200:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - jowl-net
 
 networks:
   jowl-net:
     driver: bridge
+
+volumes:
+  lucene_index:
