@@ -1,5 +1,8 @@
 # JOwl - Developer Docs & API Search Engine 🦉
 
+[![CI](https://github.com/OleksandrKukotin/j-owl/actions/workflows/ci.yml/badge.svg)](https://github.com/OleksandrKukotin/j-owl/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Tired of digging through SEO spam just to find the official docs?**  
 JOwl is a lightweight, Lucene-powered search engine built to index and retrieve developer documentation faster and cleaner than traditional search engines.
 
