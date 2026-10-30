@@ -1,10 +1,9 @@
 package com.github.oleksandrkukotin.jowl.indexing.config;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +31,8 @@ public class LuceneConfig {
     }
 
     @Bean
-    public IndexSearcher indexSearcher(IndexWriter indexWriter) throws IOException {
-        return new IndexSearcher(DirectoryReader.open(indexWriter));
+    public SearcherManager searcherManager(IndexWriter indexWriter) throws IOException {
+        return new SearcherManager(indexWriter, null);
     }
 
     @Bean
