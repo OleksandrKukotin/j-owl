@@ -12,6 +12,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.*;
 import org.slf4j.Logger;
@@ -36,10 +37,14 @@ public class DocumentSearcher {
     public static final String NEWLINE = "<br/>";
 
     private final Analyzer analyzer = new StandardAnalyzer();
-    private final IndexSearcher indexSearcher;
+    private final SearcherManager searcherManager;
 
-    public DocumentSearcher(IndexSearcher indexSearcher) {
-        this.indexSearcher = indexSearcher;
+    public DocumentSearcher(SearcherManager searcherManager) {
+        this.searcherManager = searcherManager;
+    }
+
+    public void refresh() throws IOException {
+        searcherManager.maybeRefresh();
     }
 
     public List<SearchResult> search(String queryString, int maxResults) throws ParseException, IOException {
@@ -47,6 +52,15 @@ public class DocumentSearcher {
         QueryParser queryParser = new MultiFieldQueryParser(new String[]{CLASS_DESCRIPTION, METHOD_SIGNATURE, METHOD_DESCRIPTION},
                 analyzer);
         Query query = queryParser.parse(queryString);
+        IndexSearcher indexSearcher = searcherManager.acquire();
+        try {
+            return search(indexSearcher, query, maxResults);
+        } finally {
+            searcherManager.release(indexSearcher);
+        }
+    }
+
+    private List<SearchResult> search(IndexSearcher indexSearcher, Query query, int maxResults) throws IOException {
         TopDocs topDocs = indexSearcher.search(query, maxResults);
         StoredFields storedFields = indexSearcher.storedFields();
 

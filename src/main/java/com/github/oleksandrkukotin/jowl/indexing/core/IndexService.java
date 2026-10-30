@@ -64,6 +64,7 @@ public class IndexService {
             long startTime = System.currentTimeMillis();
             
             indexer.commit();
+            searcher.refresh();
             
             long duration = System.currentTimeMillis() - startTime;
             logger.info("Index commit completed successfully in {}ms", duration);
@@ -79,6 +80,7 @@ public class IndexService {
             long startTime = System.currentTimeMillis();
             
             indexer.clearIndex();
+            searcher.refresh();
             
             long duration = System.currentTimeMillis() - startTime;
             logger.info("Index reset completed successfully in {}ms", duration);

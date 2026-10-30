@@ -4,11 +4,10 @@ import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocCrawledPage;
 import com.github.oleksandrkukotin.jowl.crawler.javadoc.JavadocMethod;
 import com.github.oleksandrkukotin.jowl.indexing.core.DocumentIndexer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,7 @@ class DocumentSearcherTest {
     private static final String MAP_URL = "https://docs.example.com/api/java/util/Map.html";
 
     private IndexWriter indexWriter;
-    private DirectoryReader reader;
+    private SearcherManager searcherManager;
     private DocumentSearcher searcher;
 
     @BeforeEach
@@ -48,13 +47,13 @@ class DocumentSearcherTest {
                 "An object that maps keys to values.", Set.of(), Set.of()));
         indexer.commit();
 
-        reader = DirectoryReader.open(indexWriter);
-        searcher = new DocumentSearcher(new IndexSearcher(reader));
+        searcherManager = new SearcherManager(indexWriter, null);
+        searcher = new DocumentSearcher(searcherManager);
     }
 
     @AfterEach
     void closeIndex() throws IOException {
-        reader.close();
+        searcherManager.close();
         indexWriter.close();
     }
 
