@@ -58,7 +58,7 @@ public class JavadocPageParser implements PageParser {
     }
 
     private Set<JavadocMethod> extractMethods(Document document) {
-        final String PRIMARY_SELECTOR = "section#method-detail";
+        final String PRIMARY_SELECTOR = "section#method-detail section.detail";
         final String SECONDARY_SELECTOR = "li.detail";
 
         Elements methodElements = document.select(PRIMARY_SELECTOR);
