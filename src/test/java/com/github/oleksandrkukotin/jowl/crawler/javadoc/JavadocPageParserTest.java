@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 class JavadocPageParserTest {
 
@@ -64,11 +65,26 @@ class JavadocPageParserTest {
     }
 
     @Test
-    @Disabled("Bug: section#method-detail wraps all methods, so they are parsed as one merged method")
     void extractsEachMethodSeparately() {
         assertThat(page.methods())
                 .extracting(JavadocMethod::name)
                 .containsExactlyInAnyOrder("greet", "count");
+    }
+
+    @Test
+    void doesNotTreatConstructorsAsMethods() {
+        assertThat(page.methods())
+                .extracting(JavadocMethod::name)
+                .doesNotContain("Greeter");
+    }
+
+    @Test
+    void keepsEachMethodDescriptionWithItsMethod() {
+        assertThat(page.methods())
+                .extracting(JavadocMethod::name, JavadocMethod::description)
+                .containsExactlyInAnyOrder(
+                        tuple("greet", "Returns a greeting for the given name."),
+                        tuple("count", "Counts greetings sent so far."));
     }
 
     @Test
